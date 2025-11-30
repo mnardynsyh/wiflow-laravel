@@ -27,7 +27,7 @@ class RegistrationController extends Controller
                 ->get();
         }
 
-        return view('admin.pendaftaran.index', compact('pendaftarans'));
+        return view('registers.index', compact('pendaftarans'));
     }
 
 
@@ -62,7 +62,7 @@ class RegistrationController extends Controller
 
         $pendaftaran = Pendaftaran::with(['paket', 'teknisi', 'laporanInstalasi'])->findOrFail($id);
         
-        return view('admin.pendaftaran.show', compact('pendaftaran'));
+        return view('registers.show', compact('pendaftaran'));
     }
 
     /**
@@ -74,7 +74,7 @@ class RegistrationController extends Controller
         
         $teknisi = User::where('role', 'teknisi')->get();
 
-        return view('admin.pendaftaran.edit', compact('pendaftaran', 'teknisi'));
+        return view('registers.edit', compact('pendaftaran', 'teknisi'));
     }
 
     /**
@@ -88,7 +88,7 @@ class RegistrationController extends Controller
         $validated = $request->validate([
             'id_teknisi'     => 'required|exists:users,id',
             'tanggal_jadwal' => 'required|date',
-            'status'         => 'required|in:pending,dijadwalkan,selesai,batal',
+            'status'         => 'required|in:Pending,Verified,Scheduled,Progress,Reported,Completed'    ,
         ]);
 
         $pendaftaran->update($validated);
@@ -104,6 +104,6 @@ class RegistrationController extends Controller
         $pendaftaran = Pendaftaran::findOrFail($id);
         $pendaftaran->delete();
 
-        return redirect()->route('pendaftaran.index')->with('success', 'Data pendaftaran dihapus.');
+        return redirect()->route('register.index')->with('success', 'Data pendaftaran dihapus.');
     }
 }
