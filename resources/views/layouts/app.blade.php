@@ -79,12 +79,18 @@
         </a>
       </nav>
 
-      <div class="px-4 py-4 border-t border-slate-100">
-        <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition">
-          <i class="fas fa-sign-out-alt w-5"></i>
-          <span class="font-medium">Logout</span>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+
+    <div class="px-4 py-4 border-t border-slate-100">
+        <a href="#" 
+          onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+          class="flex items-center gap-3 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition">
+            <i class="fas fa-sign-out-alt w-5"></i>
+            <span class="font-medium">Logout</span>
         </a>
-      </div>
+    </div>
     </aside>
 
     <!-- CONTENT -->

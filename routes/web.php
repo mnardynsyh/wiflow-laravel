@@ -19,3 +19,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::resource('reports',ReportController::class);
 Route::resource('users',UserController::class);
+
+Route::get('/dashboard', [ReportController::class,'index'])
+   ->name('admin.dashboard')
+   ->middleware('auth'); 
+
+Route::get('/teknisi/dashboard', function() {
+    return view('teknisi.dashboard'); 
+})->middleware('auth')->name('teknisi.dashboard');
