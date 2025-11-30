@@ -27,6 +27,6 @@ class HomeController extends Controller
         // 3. Jika belum login (Tamu/Guest), baru tampilkan Landing Page
         $pakets = PaketLayanan::where('is_active', true)->get();
         
-        return view('landing', compact('pakets'));
+        return view('home', compact('pakets'));
     }
 }
