@@ -12,23 +12,23 @@ class RegistrationController extends Controller
 {
 
     public function index()
-    {
-        $user = Auth::user();
+        {
+            $user = Auth::user();
 
-        if ($user->role === 'admin') {
-            // logika admin
-            $pendaftarans = Pendaftaran::with(['paket', 'teknisi'])->latest()->get();
-        } else {
-            // logika teknisi
-            $pendaftarans = Pendaftaran::with(['paket'])
-                ->where('id_teknisi', $user->id)
-                ->where('status', 'dijadwalkan')
-                ->latest()
-                ->get();
+            if ($user->role === 'admin') {
+                $pendaftarans = Pendaftaran::with(['paket', 'teknisi'])->latest()->get();
+            } else {
+                // Logika Teknisi
+                $pendaftarans = Pendaftaran::with(['paket'])
+                    ->where('id_teknisi', $user->id)
+                    ->where('status', 'Scheduled') 
+                    
+                    ->latest()
+                    ->get();
+            }
+
+            return view('registers.index', compact('pendaftarans'));
         }
-
-        return view('registers.index', compact('pendaftarans'));
-    }
 
 
     public function store(Request $request)
@@ -44,7 +44,7 @@ class RegistrationController extends Controller
         ]);
 
         // default value
-        $validated['status'] = 'pending';
+        $validated['status'] = 'Pending';
         $validated['id_teknisi'] = null;
         $validated['tanggal_jadwal'] = null;
 

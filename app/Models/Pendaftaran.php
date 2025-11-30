@@ -14,7 +14,7 @@ class Pendaftaran extends Model
     ];
 
 
-    public function paket_layanan()
+    public function paket()
     {
         return $this->belongsTo(PaketLayanan::class, 'id_paket');
     }

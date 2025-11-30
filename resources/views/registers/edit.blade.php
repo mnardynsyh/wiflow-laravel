@@ -27,14 +27,12 @@
                         <option value="">-- Pilih Teknisi --</option>
                         @foreach($teknisi as $t)
                             <option value="{{ $t->id }}" {{ $pendaftaran->id_teknisi == $t->id ? 'selected' : '' }}>
-                                {{ $t->name }}
+                                {{ $t->nama }}
                             </option>
                         @endforeach
                     </select>
                     @error('id_teknisi') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
-
-                {{-- Input Tanggal Jadwal --}}
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Jadwal Pemasangan</label>
                     <input type="datetime-local" name="tanggal_jadwal" 
@@ -48,12 +46,12 @@
                     <label class="block text-sm font-medium text-gray-700">Status Pengerjaan</label>
                     <select name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2">
                         {{-- Value disesuaikan dengan Enum di Database Migration --}}
-                        <option value="Pending" {{ $pendaftaran->status == 'Pending' ? 'selected' : '' }}>Pending (Baru Masuk)</option>
-                        <option value="Verified" {{ $pendaftaran->status == 'Verified' ? 'selected' : '' }}>Verified (Data Valid)</option>
-                        <option value="Scheduled" {{ $pendaftaran->status == 'Scheduled' ? 'selected' : '' }}>Scheduled (Dijadwalkan)</option>
-                        <option value="Progress" {{ $pendaftaran->status == 'Progress' ? 'selected' : '' }}>Progress (Sedang Dikerjakan)</option>
-                        <option value="Reported" {{ $pendaftaran->status == 'Reported' ? 'selected' : '' }}>Reported (Laporan Masuk)</option>
-                        <option value="Completed" {{ $pendaftaran->status == 'Completed' ? 'selected' : '' }}>Completed (Selesai)</option>
+                        <option value="Pending" {{ $pendaftaran->status == 'Pending' ? 'selected' : '' }}>Validasi Data</option>
+                        <option value="Verified" {{ $pendaftaran->status == 'Verified' ? 'selected' : '' }}>Data Valid</option>
+                        <option value="Scheduled" {{ $pendaftaran->status == 'Scheduled' ? 'selected' : '' }}>Dijadwalkan</option>
+                        <option value="Progress" {{ $pendaftaran->status == 'Progress' ? 'selected' : '' }}>Sedang Dikerjakan</option>
+                        <option value="Reported" {{ $pendaftaran->status == 'Reported' ? 'selected' : '' }}>Laporan Tercatat</option>
+                        <option value="Completed" {{ $pendaftaran->status == 'Completed' ? 'selected' : '' }}>Selesai</option>
                     </select>
                     @error('status') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
