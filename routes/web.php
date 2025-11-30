@@ -49,4 +49,8 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
+<<<<<<< Updated upstream
 });
+=======
+});
+>>>>>>> Stashed changes
