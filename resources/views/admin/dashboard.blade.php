@@ -64,14 +64,14 @@
         <h3 class="text-sm font-semibold text-slate-800">Laporan Instalasi Terbaru</h3>
         <p class="text-xs text-slate-400 mt-0.5">Daftar laporan pekerjaan teknisi.</p>
       </div>
-      {{-- 
+      
       <div class="flex items-center gap-3">
         <a href="{{ route('reports.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg shadow hover:bg-indigo-700 transition">
           <i class="fas fa-plus"></i>
           <span>Buat Laporan</span>
         </a>
       </div> 
-      --}}
+     
     </div>
 
     <div class="p-0">

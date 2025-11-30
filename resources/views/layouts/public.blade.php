@@ -66,7 +66,11 @@
                     
                     @if (Route::has('login'))
                         @auth
-                            <a href="{{ url('/dashboard') }}" class="bg-slate-900 text-white px-5 py-2.5 rounded-full font-medium hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">Dashboard</a>
+                            @if(Auth::user()->role === 'admin')
+                                <a href="{{ route('admin.dashboard') }}" class="bg-slate-900 text-white px-5 py-2.5 rounded-full font-medium hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">Dashboard Admin</a>
+                            @else
+                                <a href="{{ route('teknisi.dashboard') }}" class="bg-slate-900 text-white px-5 py-2.5 rounded-full font-medium hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">Dashboard Teknisi</a>
+                            @endif
                         @else
                             <a href="{{ route('login') }}" class="text-primary font-medium hover:text-secondary">Masuk Staff</a>
                         @endauth

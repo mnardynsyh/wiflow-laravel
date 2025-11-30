@@ -43,9 +43,7 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
-    /**
-     * Logika redirect user berdasarkan role
-     */
+
     protected function redirectBasedOnRole($user)
     {
         if ($user->role === 'admin') {
@@ -54,7 +52,7 @@ class AuthController extends Controller
             return redirect()->route('teknisi.dashboard');
         }
 
-        // Default fallback (jika ada role lain)
+       
         return redirect('/');
     }
 

@@ -22,8 +22,9 @@
                 <div>
                     <button @click="profileOpen = !profileOpen" @click.outside="profileOpen = false" type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-blue-100 transition-all">
                         <span class="sr-only">Open user menu</span>
+                        {{-- Avatar default jika user belum punya foto --}}
                         <img class="w-9 h-9 rounded-full object-cover border-2 border-white shadow-sm" 
-                             src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->nama ?? 'Admin') }}&background=2563EB&color=FFFFFF&bold=true" 
+                             src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'Admin') }}&background=2563EB&color=FFFFFF&bold=true" 
                              alt="user photo">
                     </button>
                 </div>
@@ -39,7 +40,7 @@
                      class="absolute right-0 top-10 z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-xl border border-gray-100 w-56 origin-top-right">
                     
                     <div class="px-4 py-3 bg-gray-50 rounded-t-lg">
-                        <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->nama ?? 'Administrator' }}</p>
+                        <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->name ?? 'Administrator' }}</p>
                         <p class="text-xs text-gray-500 truncate font-medium">{{ Auth::user()->email }}</p>
                     </div>
                     <ul class="py-1">
@@ -118,6 +119,19 @@
                 Data Master
             </div>
 
+            {{-- MENU BARU: PAKET LAYANAN --}}
+            <li>
+                <a href="{{ route('plans.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 
+                   {{ request()->routeIs('plans.*') 
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm ring-1 ring-blue-200' 
+                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    
+                    <i class="fa-solid fa-tags w-6 text-center text-[18px] transition duration-200 
+                       {{ request()->routeIs('plans.*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                    <span class="flex-1 whitespace-nowrap">Paket Layanan</span>
+                </a>
+            </li>
 
             <li>
                 <a href="{{ route('users.index') }}"

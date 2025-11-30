@@ -15,7 +15,7 @@ class ReportController extends Controller
     {
        
         $laporan = LaporanInstalasi::with(['pendaftaran', 'teknisi'])->latest()->get();
-        return view('admin.dashboard', compact('laporan'));
+        return view('reports.index', compact('laporan'));
     }
 
     public function create()
@@ -51,15 +51,19 @@ class ReportController extends Controller
         return view('reports.show', compact('laporan'));
     }
 
-    public function edit(string $id)
-    {
-        $laporan = LaporanInstalasi::findOrFail($id);
-        $pendaftaran = Pendaftaran::all();
-        $teknisi = User::all();
+  public function edit(string $id)
+{
+    $laporan = LaporanInstalasi::findOrFail($id);
+    
+    // TAMBAHKAN KODE INI SEMENTARA:
+    // dd($laporan) akan mematikan proses dan menampilkan isi variabel
+    dd($laporan); 
 
-        return view('reports.edit', compact('laporan', 'pendaftaran', 'teknisi'));
-    }
+    $pendaftaran = Pendaftaran::all();
+    $teknisi = User::where('role', 'teknisi')->get(); 
 
+    return view('reports.edit', compact('laporan', 'pendaftaran', 'teknisi'));
+}
 
     public function update(Request $request, string $id)
     {
