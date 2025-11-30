@@ -18,4 +18,5 @@ class LaporanInstalasi extends Model
     {
         return $this->belongsTo(User::class, 'id_teknisi');
     }
+
 }

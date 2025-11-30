@@ -23,4 +23,10 @@ class Pendaftaran extends Model
     {
         return $this->belongsTo(User::class, 'id_teknisi');
     }
+
+
+    public function laporanInstalasi()
+    {
+        return $this->hasOne(LaporanInstalasi::class, 'id_pendaftaran');
+    }
 }

@@ -104,6 +104,6 @@ class RegistrationController extends Controller
         $pendaftaran = Pendaftaran::findOrFail($id);
         $pendaftaran->delete();
 
-        return redirect()->route('register.index')->with('success', 'Data pendaftaran dihapus.');
+        return redirect()->route('registers.index')->with('success', 'Data pendaftaran dihapus.');
     }
 }
