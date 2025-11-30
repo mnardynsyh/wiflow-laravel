@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Worker\DashboardController as WorkerController;
 // use App\Http\Controllers\PaketController;
 
 
@@ -39,12 +40,13 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-    Route::prefix('teknisi')->middleware(['role:teknisi'])->group(function () {
+     Route::prefix('teknisi')->middleware(['role:teknisi'])->group(function () {
         
-        Route::get('/dashboard', [RegistrationController::class, 'index'])->name('teknisi.dashboard');
+        Route::get('/dashboard', [WorkerController::class, 'index'])->name('teknisi.dashboard');
         
         Route::get('/laporan/create/{id_pendaftaran}', [ReportController::class, 'create'])->name('teknisi.laporan.create');
         Route::post('/laporan', [ReportController::class, 'store'])->name('teknisi.laporan.store');
     });
+
 
 });
