@@ -90,7 +90,7 @@
             </li>
 
             <li>
-                <a href="#" 
+                <a href="{{ route('teknisi.history') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
                     <i class="fa-solid fa-clock-rotate-left w-6 text-center text-[18px] text-gray-400"></i>
                     <span class="flex-1 whitespace-nowrap">Riwayat Pekerjaan</span>
@@ -102,7 +102,7 @@
             </div>
 
              <li>
-                <a href="#" 
+                <a href="{{ route('teknisi.profile') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
                     <i class="fa-solid fa-user-gear w-6 text-center text-[18px] text-gray-400"></i>
                     <span class="flex-1 whitespace-nowrap">Profil Saya</span>

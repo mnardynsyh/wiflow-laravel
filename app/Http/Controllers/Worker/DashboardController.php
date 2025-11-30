@@ -3,19 +3,21 @@
 namespace App\Http\Controllers\Worker;
 
 use App\Models\Pendaftaran;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class DashboardController extends Controller
 {
     /**
-     * Menampilkan Dashboard Teknisi (Daftar Tugas)
+     *  Dashboard Teknisi (Daftar Tugas)
      */
     public function index()
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $pendaftarans = Pendaftaran::with('paket')
@@ -32,16 +34,16 @@ class DashboardController extends Controller
      */
     public function history()
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // Ambil data yang sudah selesai dikerjakan oleh teknisi ini
         $riwayat = Pendaftaran::with(['paket', 'laporanInstalasi'])
             ->where('id_teknisi', $user->id)
             ->where('status', 'selesai')
-            ->latest('updated_at') // Urutkan dari yang baru selesai
+            ->latest('updated_at')
             ->get();
 
-        return view('teknisi.history', compact('riwayat'));
+        return view('worker.history', compact('riwayat'));
     }
 
     /**
@@ -49,33 +51,43 @@ class DashboardController extends Controller
      */
     public function profile()
     {
-        return view('teknisi.profile');
+        return view('worker.profile');
     }
 
     /**
-     * Proses Ganti Password
+     * Update Info Dasar (Nama & Email)
      */
-    public function updateProfile(Request $request)
+    public function updateInfo(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'nama'  => 'required|string|max:255',
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+        ]);
+
+        $user->update($validated);
+
+        return back()->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    /**
+     * Ganti Password
+     */
+    public function updatePassword(Request $request)
     {
         $request->validate([
-            'current_password' => 'required',
             'password' => 'required|min:6|confirmed',
         ]);
 
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // Cek password lama
-        if (!Hash::check($request->current_password, $user->password)) {
-            throw ValidationException::withMessages([
-                'current_password' => 'Password saat ini salah.',
-            ]);
-        }
-
-        // Update password
         $user->update([
             'password' => Hash::make($request->password)
         ]);
 
-        return back()->with('success', 'Password berhasil diperbarui!');
+        return back()->with('success', 'Password berhasil direset!');
     }
 }

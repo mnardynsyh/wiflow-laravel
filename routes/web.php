@@ -40,17 +40,21 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-     Route::prefix('teknisi')->middleware(['role:teknisi'])->group(function () {
+    Route::prefix('teknisi')->middleware(['role:teknisi'])->group(function () {
         
+        // Dashboard Teknisi
         Route::get('/dashboard', [WorkerController::class, 'index'])->name('teknisi.dashboard');
         
+        // Riwayat Pekerjaan
+        Route::get('/riwayat', [WorkerController::class, 'history'])->name('teknisi.history');
+
+        // Profil & Ganti Password (DIPISAH)
+        Route::get('/profil', [WorkerController::class, 'profile'])->name('teknisi.profile');
+        Route::put('/profil/info', [WorkerController::class, 'updateInfo'])->name('teknisi.profile.update.info');
+        Route::put('/profil/password', [WorkerController::class, 'updatePassword'])->name('teknisi.profile.update.password');
+
+        // Input Laporan
         Route::get('/laporan/create/{id_pendaftaran}', [ReportController::class, 'create'])->name('teknisi.laporan.create');
         Route::post('/laporan', [ReportController::class, 'store'])->name('teknisi.laporan.store');
     });
-
-
-<<<<<<< Updated upstream
 });
-=======
-});
->>>>>>> Stashed changes
