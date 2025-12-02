@@ -3,10 +3,10 @@
 @section('title', 'Tambah Paket Baru')
 
 @section('content')
-<div class="max-w-3xl mx-auto">
+<div class="space-y-6">
     
     {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Tambah Paket Layanan</h1>
             <p class="text-sm text-gray-500">Buat paket internet baru untuk ditawarkan kepada pelanggan.</p>
@@ -29,10 +29,10 @@
             <form action="{{ route('plans.store') }}" method="POST">
                 @csrf
 
-                <div class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
                     
-                    {{-- Nama Paket --}}
-                    <div>
+                    {{-- Nama Paket (Full Width) --}}
+                    <div class="lg:col-span-2">
                         <label for="nama_paket" class="block text-sm font-semibold text-slate-700 mb-2">Nama Paket</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -45,7 +45,7 @@
                         @error('nama_paket') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    {{-- Harga --}}
+                    {{-- Harga (Half Width) --}}
                     <div>
                         <label for="harga" class="block text-sm font-semibold text-slate-700 mb-2">Harga Bulanan</label>
                         <div class="relative">
@@ -62,8 +62,19 @@
                         @error('harga') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    {{-- Deskripsi --}}
+                    {{-- Status (Half Width) --}}
                     <div>
+                        <label for="is_active" class="block text-sm font-semibold text-slate-700 mb-2">Status Publikasi</label>
+                        <div class="relative">
+                            <select name="is_active" id="is_active" class="w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500 bg-white py-2.5 px-4 pr-8 text-slate-700 cursor-pointer">
+                                <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Aktif (Tampil di Web)</option>
+                                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Non-Aktif (Sembunyikan)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Deskripsi (Full Width) --}}
+                    <div class="lg:col-span-2">
                         <label for="deskripsi" class="block text-sm font-semibold text-slate-700 mb-2">Deskripsi & Keunggulan</label>
                         <textarea name="deskripsi" id="deskripsi" rows="4" 
                                   class="w-full px-4 py-2.5 rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-400 transition shadow-sm resize-none" 
@@ -75,19 +86,15 @@
                         @error('deskripsi') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    {{-- Status --}}
-                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                        <label for="is_active" class="block text-sm font-semibold text-blue-800 mb-2">Status Publikasi</label>
-                        <div class="relative">
-                            <select name="is_active" id="is_active" class="w-full rounded-lg border-blue-200 focus:ring-blue-500 focus:border-blue-500 bg-white py-2.5 px-4 pr-8 text-slate-700 cursor-pointer">
-                                <option value="1" {{ old('is_active') == '1' ? 'selected' : '' }}>Aktif (Tampil di Web)</option>
-                                <option value="0" {{ old('is_active') == '0' ? 'selected' : '' }}>Non-Aktif (Sembunyikan)</option>
-                            </select>
+                    {{-- Info Box --}}
+                    <div class="lg:col-span-2 bg-blue-50 p-4 rounded-lg border border-blue-100 flex items-start gap-3">
+                        <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                        <div>
+                            <h4 class="text-sm font-semibold text-blue-800">Informasi Penting</h4>
+                            <p class="text-xs text-blue-600 mt-1">
+                                Paket yang diaktifkan akan langsung terlihat oleh calon pelanggan di halaman depan website. Pastikan harga dan deskripsi sudah sesuai.
+                            </p>
                         </div>
-                        <p class="text-xs text-blue-600 mt-2 flex items-center gap-1.5">
-                            <i class="fas fa-info-circle"></i> 
-                            Paket yang non-aktif tidak akan bisa dipilih oleh calon pelanggan baru.
-                        </p>
                     </div>
 
                 </div>

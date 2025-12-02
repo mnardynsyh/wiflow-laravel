@@ -3,10 +3,10 @@
 @section('title', 'Edit Paket Layanan')
 
 @section('content')
-<div class="max-w-3xl mx-auto">
+<div class="space-y-6">
     
     {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Edit Paket Layanan</h1>
             <p class="text-sm text-gray-500">Perbarui informasi harga atau deskripsi paket ini.</p>
@@ -22,7 +22,7 @@
             <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
                 <i class="fas fa-edit"></i>
             </div>
-            <h3 class="font-bold text-slate-800">Edit Informasi Paket</h3>
+            <h3 class="font-bold text-slate-800">Formulir Edit Paket</h3>
         </div>
 
         <div class="p-6 md:p-8">
@@ -30,10 +30,10 @@
                 @csrf
                 @method('PUT')
 
-                <div class="space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-6">
                     
-                    {{-- Nama Paket --}}
-                    <div>
+                    {{-- Nama Paket (Full Width) --}}
+                    <div class="lg:col-span-2">
                         <label for="nama_paket" class="block text-sm font-semibold text-slate-700 mb-2">Nama Paket</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -46,7 +46,7 @@
                         @error('nama_paket') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    {{-- Harga --}}
+                    {{-- Harga (Half Width) --}}
                     <div>
                         <label for="harga" class="block text-sm font-semibold text-slate-700 mb-2">Harga Bulanan</label>
                         <div class="relative">
@@ -63,29 +63,39 @@
                         @error('harga') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    {{-- Deskripsi --}}
+                    {{-- Status (Half Width) --}}
                     <div>
-                        <label for="deskripsi" class="block text-sm font-semibold text-slate-700 mb-2">Deskripsi & Keunggulan</label>
-                        <textarea name="deskripsi" id="deskripsi" rows="4" 
-                                  class="w-full px-4 py-2.5 rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-400 transition shadow-sm resize-none" 
-                                  placeholder="Jelaskan detail kecepatan, kuota, atau bonus alat...">{{ old('deskripsi', $plan->deskripsi) }}</textarea>
-                        <p class="text-xs text-slate-400 mt-1">Maksimal 255 karakter.</p>
-                        @error('deskripsi') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
-
-                    {{-- Status --}}
-                    <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
-                        <label for="is_active" class="block text-sm font-semibold text-amber-800 mb-2">Status Publikasi</label>
+                        <label for="is_active" class="block text-sm font-semibold text-slate-700 mb-2">Status Publikasi</label>
                         <div class="relative">
-                            <select name="is_active" id="is_active" class="w-full rounded-lg border-amber-200 focus:ring-amber-500 focus:border-amber-500 bg-white py-2.5 px-4 pr-8 text-slate-700 cursor-pointer">
+                            <select name="is_active" id="is_active" class="w-full rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500 bg-white py-2.5 px-4 pr-8 text-slate-700 cursor-pointer">
                                 <option value="1" {{ old('is_active', $plan->is_active) == '1' ? 'selected' : '' }}>Aktif (Tampil di Web)</option>
                                 <option value="0" {{ old('is_active', $plan->is_active) == '0' ? 'selected' : '' }}>Non-Aktif (Sembunyikan)</option>
                             </select>
                         </div>
-                        <p class="text-xs text-amber-700 mt-2 flex items-center gap-1.5">
-                            <i class="fas fa-info-circle"></i> 
-                            Mengubah status menjadi Non-Aktif akan menyembunyikan paket ini dari publik.
-                        </p>
+                    </div>
+
+                    {{-- Deskripsi (Full Width) --}}
+                    <div class="lg:col-span-2">
+                        <label for="deskripsi" class="block text-sm font-semibold text-slate-700 mb-2">Deskripsi & Keunggulan</label>
+                        <textarea name="deskripsi" id="deskripsi" rows="4" 
+                                  class="w-full px-4 py-2.5 rounded-lg border-slate-300 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-400 transition shadow-sm resize-none" 
+                                  placeholder="Jelaskan detail kecepatan, kuota, atau bonus alat...">{{ old('deskripsi', $plan->deskripsi) }}</textarea>
+                        <div class="flex justify-between mt-1">
+                            <p class="text-xs text-slate-400">Jelaskan fitur utama paket ini agar menarik.</p>
+                            <p class="text-xs text-slate-400">Max 255 char</p>
+                        </div>
+                        @error('deskripsi') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    {{-- Info Box (Amber for edit context) --}}
+                    <div class="lg:col-span-2 bg-amber-50 p-4 rounded-lg border border-amber-100 flex items-start gap-3">
+                        <i class="fas fa-info-circle text-amber-500 mt-0.5"></i>
+                        <div>
+                            <h4 class="text-sm font-semibold text-amber-800">Perhatian</h4>
+                            <p class="text-xs text-amber-700 mt-1">
+                                Perubahan harga atau nama paket akan langsung terlihat di website. Pelanggan lama yang sudah berlangganan tidak akan otomatis berubah harganya kecuali diupdate manual.
+                            </p>
+                        </div>
                     </div>
 
                 </div>
