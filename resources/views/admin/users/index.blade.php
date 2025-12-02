@@ -1,62 +1,116 @@
 @extends('layouts.app')
 
 @section('title', 'Daftar User')
-@section('header', 'Manajemen User')
 
 @section('content')
-    
-    <div class="flex justify-between items-center mb-6">
-        <h3 class="text-gray-700 text-lg font-semibold">Data Pengguna</h3>
-        <a href="{{ route('users.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:scale-105">
-            <i class="fas fa-plus mr-2"></i> Tambah User
+<div class="space-y-6">
+
+    {{-- Header Section --}}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-bold tracking-tight text-gray-900">Data Pengguna</h2>
+            <p class="text-sm text-gray-500">Kelola akun administrator dan teknisi lapangan.</p>
+        </div>
+        
+        <a href="{{ route('users.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow transition-all">
+            <i class="fas fa-plus"></i>
+            <span>Tambah User Baru</span>
         </a>
     </div>
 
+    {{-- Pesan Sukses --}}
     @if(session('success'))
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded shadow-sm" role="alert">
-            <p>{{ session('success') }}</p>
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg flex items-center gap-2 shadow-sm" role="alert">
+            <i class="fas fa-check-circle"></i>
+            <span>{{ session('success') }}</span>
         </div>
     @endif
 
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-        <table class="min-w-full leading-normal">
-            <thead>
-                <tr class="bg-gray-50 text-gray-600 text-xs uppercase font-bold tracking-wider">
-                    <th class="px-6 py-4 text-left">Nama</th>
-                    <th class="px-6 py-4 text-left">Email</th>
-                    <th class="px-6 py-4 text-center">Role</th>
-                    <th class="px-6 py-4 text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-                @foreach($users as $user)
-                <tr class="hover:bg-blue-50 transition duration-150">
-                    <td class="px-6 py-4 whitespace-no-wrap font-medium text-gray-900">{{ $user->nama }}</td>
-                    <td class="px-6 py-4 whitespace-no-wrap text-gray-600">{{ $user->email }}</td>
-                    <td class="px-6 py-4 whitespace-no-wrap text-center">
-                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->role == 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800' }}">
-                            {{ ucfirst($user->role) }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-no-wrap text-center text-sm">
-                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700 mx-2 transition" onclick="return confirm('Hapus user ini?')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
-                        <a href="{{ route('users.edit', $user->id) }}" class="text-blue-500 hover:text-blue-700 mx-2 transition">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+    {{-- Tabel Data --}}
+    <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-100">
+                <thead class="bg-slate-50">
+                    <tr class="text-xs text-slate-500 uppercase tracking-wider">
+                        <th scope="col" class="px-6 py-4 text-left font-semibold">Nama Pengguna</th>
+                        <th scope="col" class="px-6 py-4 text-left font-semibold">Email</th>
+                        <th scope="col" class="px-6 py-4 text-center font-semibold">Role</th>
+                        <th scope="col" class="px-6 py-4 text-center font-semibold">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-slate-100">
+                    @forelse($users as $user)
+                    <tr class="hover:bg-slate-50 transition duration-150">
+                        {{-- Nama & Avatar --}}
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-3">
+                                <img class="h-9 w-9 rounded-full object-cover bg-slate-100 border border-slate-200" 
+                                     src="https://ui-avatars.com/api/?name={{ urlencode($user->nama) }}&background=random&color=fff&bold=true" 
+                                     alt="{{ $user->nama }}">
+                                <span class="text-sm font-bold text-slate-800">{{ $user->nama }}</span>
+                            </div>
+                        </td>
+
+                        {{-- Email --}}
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                            {{ $user->email }}
+                        </td>
+
+                        {{-- Role Badge --}}
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            @if($user->role === 'admin')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100">
+                                    <i class="fas fa-user-shield text-[10px]"></i> 
+                                    Administrator
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                    <i class="fas fa-tools text-[10px]"></i> 
+                                    Teknisi
+                                </span>
+                            @endif
+                        </td>
+
+                        {{-- Aksi --}}
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                            <div class="flex items-center justify-center gap-2">
+                                {{-- Edit --}}
+                                <a href="{{ route('users.edit', $user->id) }}" class="p-2 rounded-lg text-slate-500 hover:bg-amber-50 hover:text-amber-600 transition" title="Edit User">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+
+                                {{-- Delete --}}
+                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-2 rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-600 transition" title="Hapus User">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-16 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-users text-slate-300 text-3xl"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-slate-900">Belum ada user</h3>
+                                <p class="text-slate-500 text-sm mt-1">Tambahkan user baru untuk mulai mengelola sistem.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        
+        {{-- Pagination --}}
+        <div class="px-6 py-4 border-t border-slate-100 bg-slate-50">
             {{ $users->links() }}
         </div>
     </div>
-
+</div>
 @endsection
