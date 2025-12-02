@@ -1,4 +1,3 @@
-{
 <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
     <div class="px-3 py-3 lg:px-5 lg:pl-3 h-16 flex items-center justify-between">
         <div class="flex items-center justify-start rtl:justify-end">
@@ -63,6 +62,7 @@
     </div>
 </nav>
 
+{{-- === BAGIAN 2: SIDEBAR === --}}
 <aside id="logo-sidebar" 
        class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 sm:translate-x-0"
        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
@@ -76,6 +76,7 @@
                 Job Desk
             </div>
 
+            {{-- 1. Dashboard (Statistik) --}}
             <li>
                 <a href="{{ route('teknisi.dashboard') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 
@@ -83,16 +84,36 @@
                        ? 'bg-emerald-50 text-emerald-700 font-bold shadow-sm ring-1 ring-emerald-200' 
                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
                     
-                    <i class="fa-solid fa-clipboard-list w-6 text-center text-[18px] transition duration-200 
+                    <i class="fa-solid fa-chart-pie w-6 text-center text-[18px] transition duration-200 
                        {{ request()->routeIs('teknisi.dashboard') ? 'text-emerald-600' : 'text-gray-400' }}"></i>
+                    <span class="flex-1 whitespace-nowrap">Dashboard</span>
+                </a>
+            </li>
+
+            {{-- 2. Tugas Saya (Daftar Lengkap) --}}
+            <li>
+                <a href="{{ route('teknisi.assignments.index') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 
+                   {{ request()->routeIs('teknisi.assignments.*') 
+                       ? 'bg-emerald-50 text-emerald-700 font-bold shadow-sm ring-1 ring-emerald-200' 
+                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    
+                    <i class="fa-solid fa-clipboard-list w-6 text-center text-[18px] transition duration-200 
+                       {{ request()->routeIs('teknisi.assignments.*') ? 'text-emerald-600' : 'text-gray-400' }}"></i>
                     <span class="flex-1 whitespace-nowrap">Tugas Saya</span>
                 </a>
             </li>
 
+            {{-- 3. Riwayat Pekerjaan --}}
             <li>
                 <a href="{{ route('teknisi.history') }}" 
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-                    <i class="fa-solid fa-clock-rotate-left w-6 text-center text-[18px] text-gray-400"></i>
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 
+                   {{ request()->routeIs('teknisi.history') 
+                       ? 'bg-emerald-50 text-emerald-700 font-bold shadow-sm ring-1 ring-emerald-200' 
+                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    
+                    <i class="fa-solid fa-clock-rotate-left w-6 text-center text-[18px] transition duration-200 
+                       {{ request()->routeIs('teknisi.history') ? 'text-emerald-600' : 'text-gray-400' }}"></i>
                     <span class="flex-1 whitespace-nowrap">Riwayat Pekerjaan</span>
                 </a>
             </li>
@@ -101,16 +122,23 @@
                 Pengaturan
             </div>
 
+            {{-- 4. Profil Saya --}}
              <li>
                 <a href="{{ route('teknisi.profile') }}" 
-                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-                    <i class="fa-solid fa-user-gear w-6 text-center text-[18px] text-gray-400"></i>
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 
+                   {{ request()->routeIs('teknisi.profile') 
+                       ? 'bg-emerald-50 text-emerald-700 font-bold shadow-sm ring-1 ring-emerald-200' 
+                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    
+                    <i class="fa-solid fa-user-gear w-6 text-center text-[18px] transition duration-200 
+                       {{ request()->routeIs('teknisi.profile') ? 'text-emerald-600' : 'text-gray-400' }}"></i>
                     <span class="flex-1 whitespace-nowrap">Profil Saya</span>
                 </a>
             </li>
 
         </ul>
 
+        {{-- FOOTER SIDEBAR --}}
         <div class="px-3 pb-6 mt-4 border-t border-gray-100 pt-6">
             <form action="{{ route('logout') }}" method="POST" class="w-full">
                 @csrf
