@@ -27,7 +27,7 @@ class RegistrationController extends Controller
                     ->get();
             }
 
-            return view('registers.index', compact('pendaftarans'));
+            return view('admin.registers.index', compact('pendaftarans'));
         }
 
 
@@ -62,7 +62,7 @@ class RegistrationController extends Controller
 
         $pendaftaran = Pendaftaran::with(['paket', 'teknisi', 'laporanInstalasi'])->findOrFail($id);
         
-        return view('registers.show', compact('pendaftaran'));
+        return view('admin.registers.show', compact('pendaftaran'));
     }
 
     /**
@@ -74,7 +74,7 @@ class RegistrationController extends Controller
         
         $teknisi = User::where('role', 'teknisi')->get();
 
-        return view('registers.edit', compact('pendaftaran', 'teknisi'));
+        return view('admin.registers.edit', compact('pendaftaran', 'teknisi'));
     }
 
     /**

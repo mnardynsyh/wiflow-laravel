@@ -10,12 +10,12 @@ class PlanController extends Controller
     public function index()
     {
         $plans = PaketLayanan::latest()->get();
-        return view('plans.index', compact('plans'));
+        return view('admin.plans.index', compact('plans'));
     }
 
     public function create()
     {
-        return view('plans.create');
+        return view('admin.plans.create');
     }
 
     public function store(Request $request)
@@ -35,7 +35,7 @@ class PlanController extends Controller
     public function edit($id)
     {
         $plan = PaketLayanan::findOrFail($id);
-        return view('plans.edit', compact('plan'));
+        return view('admin.plans.edit', compact('plan'));
     }
 
     public function update(Request $request, $id)
