@@ -56,7 +56,7 @@
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <a href="{{ url('/') }}" class="flex-shrink-0 flex items-center gap-2 group">
-                    <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/30 transition transform group-hover:scale-105">
+                    <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/30">
                         <i class="fas fa-wifi"></i>
                     </div>
                     <span class="font-bold text-2xl tracking-tight text-slate-900 group-hover:text-primary transition-colors">WifiNet</span>
