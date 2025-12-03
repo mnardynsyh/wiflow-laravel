@@ -1,36 +1,39 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Models\LaporanInstalasi;
-use App\Models\Pendaftaran;
 use App\Models\User;
+use App\Models\Pendaftaran;
 use Illuminate\Http\Request;
+use App\Models\LaporanInstalasi;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
+    /**
+     * ADMIN: Lihat Daftar Laporan
+     */
     public function index()
     {
         $laporan = LaporanInstalasi::with(['pendaftaran', 'teknisi'])->latest()->get();
-        return view('reports.index', compact('laporan'));
+        return view('admin.reports.index', compact('laporan'));
     }
 
-    public function create(Request $request)
+    /**
+     * ADMIN: Buat Laporan Manual (Opsional/Backup)
+     */
+    public function create()
     {
-        // Filter: Hanya tampilkan yang statusnya 'Scheduled' atau 'Progress'
-        $pendaftaran = Pendaftaran::whereIn('status', ['Scheduled', 'Progress'])->get();
+        $pendaftaran = Pendaftaran::where('status', 'dijadwalkan')->get();
         $teknisi = User::where('role', 'teknisi')->get();
         
-        $pendaftaranSelected = null;
-        if ($request->has('id_pendaftaran')) {
-            $pendaftaranSelected = Pendaftaran::find($request->id_pendaftaran);
-        }
-
-        return view('admin.reports.create', compact('pendaftaran', 'teknisi', 'pendaftaranSelected'));
+        return view('admin.reports.create', compact('pendaftaran', 'teknisi'));
     }
 
+    /**
+     * ADMIN: Simpan Laporan Manual
+     */
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -47,16 +50,11 @@ class ReportController extends Controller
 
         LaporanInstalasi::create($validatedData);
 
-        // UPDATE PENTING: Ubah status jadi 'Reported' (Sesuai Enum)
-        // Artinya teknisi sudah lapor, tinggal Admin validasi jadi 'Completed'
+        // Update status pendaftaran
         $pendaftaran = Pendaftaran::findOrFail($request->id_pendaftaran);
-        $pendaftaran->update(['status' => 'Reported']);
+        $pendaftaran->update(['status' => 'selesai']);
 
-        if (Auth::user()->role == 'teknisi') {
-            return redirect()->route('teknisi.dashboard')->with('success', 'Laporan terkirim! Menunggu verifikasi admin.');
-        }
-
-        return redirect()->route('reports.index')->with('success', 'Laporan berhasil dibuat!');
+        return redirect()->route('reports.index')->with('success', 'Laporan berhasil dibuat secara manual!');
     }
     
     public function show(string $id)
@@ -69,13 +67,15 @@ class ReportController extends Controller
     {
         $laporan = LaporanInstalasi::findOrFail($id);
         $pendaftaran = Pendaftaran::all();
-        $teknisi = User::where('role', 'teknisi')->get();
+        $teknisi = User::all(); // Admin bisa pilih user mana saja
+
         return view('admin.reports.edit', compact('laporan', 'pendaftaran', 'teknisi'));
     }
 
     public function update(Request $request, string $id)
     {
         $laporan = LaporanInstalasi::findOrFail($id);
+        
         $validatedData = $request->validate([
             'id_pendaftaran' => 'required|exists:pendaftaran,id',
             'id_teknisi'     => 'required|exists:users,id',
@@ -90,7 +90,7 @@ class ReportController extends Controller
         }
         
         $laporan->update($validatedData);
-        return redirect()->route('reports.index')->with('success', 'Laporan diperbarui!');
+        return redirect()->route('reports.index')->with('success', 'Laporan berhasil diperbarui!');
     }
 
     public function destroy(string $id)
@@ -98,6 +98,7 @@ class ReportController extends Controller
         $laporan = LaporanInstalasi::findOrFail($id);
         if ($laporan->bukti_foto) Storage::disk('public')->delete($laporan->bukti_foto);
         $laporan->delete();
-        return redirect()->route('reports.index')->with('success', 'Laporan dihapus!');
+        
+        return redirect()->route('reports.index')->with('success', 'Laporan berhasil dihapus!');
     }
 }

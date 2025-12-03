@@ -11,6 +11,12 @@
             <h2 class="text-2xl font-bold tracking-tight text-gray-900">Arsip Laporan Instalasi</h2>
             <p class="text-sm text-gray-500">Rekapitulasi hasil pekerjaan instalasi yang telah selesai dikerjakan teknisi.</p>
         </div>
+        
+        {{-- Tombol Buat Laporan Manual (Ditambahkan Kembali) --}}
+        <a href="{{ route('reports.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow transition-all">
+            <i class="fas fa-plus"></i>
+            <span>Input Laporan Manual</span>
+        </a>
     </div>
 
     {{-- Pesan Sukses --}}
@@ -97,9 +103,14 @@
                         {{-- Kolom Aksi --}}
                         <td class="px-6 py-4 text-center whitespace-nowrap">
                             <div class="flex items-center justify-center gap-2">
-                                {{-- Tombol Detail (Pengganti Edit) --}}
-                                <a href="{{ route('reports.show', $item->id) }}" class="p-2 rounded-lg text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition" title="Lihat Detail Lengkap">
+                                {{-- Tombol Detail --}}
+                                <a href="{{ route('reports.show', $item->id) }}" class="p-2 rounded-lg text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition" title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
+                                </a>
+
+                                {{-- Tombol Edit (Ditambahkan) --}}
+                                <a href="{{ route('reports.edit', $item->id) }}" class="p-2 rounded-lg text-slate-500 hover:bg-amber-50 hover:text-amber-600 transition" title="Edit Data">
+                                    <i class="fas fa-pencil-alt"></i>
                                 </a>
 
                                 {{-- Tombol Hapus --}}

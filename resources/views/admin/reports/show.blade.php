@@ -119,7 +119,7 @@
                                 <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-xs">
                                     {{ substr($laporan->teknisi->name ?? 'T', 0, 1) }}
                                 </div>
-                                <span class="font-medium text-gray-800">{{ $laporan->teknisi->name ?? 'Data User Terhapus' }}</span>
+                                <span class="font-medium text-gray-800">{{ $laporan->teknisi->nama ?? 'Data User Terhapus' }}</span>
                             </dd>
                         </div>
 

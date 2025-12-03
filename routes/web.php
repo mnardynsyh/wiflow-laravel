@@ -4,16 +4,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegistrationController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\PlanController;
+use App\Http\Controllers\Admin\PlanController;
 
 // Import Controller Dashboard Admin
-use App\Http\Controllers\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ReportController;
 
 // Import Controller Teknisi (Worker Namespace)
 use App\Http\Controllers\Worker\DashboardController as WorkerDashboardController;
-use App\Http\Controllers\Worker\AssignmentController as WorkerAssignmentController;
+use App\Http\Controllers\Worker\ReportController as WorkerReportController;
 use App\Http\Controllers\Worker\ProfileController as WorkerProfileController; // <-- Controller Profil Baru
 use App\Http\Controllers\TeknisiController; // Sisa untuk History
 
@@ -56,7 +56,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [WorkerDashboardController::class, 'index'])->name('teknisi.dashboard');
         
         // 2. Tugas Saya (Daftar Lengkap Pekerjaan)
-        Route::get('/tugas', [WorkerAssignmentController::class, 'index'])->name('teknisi.assignments.index');
+        Route::get('/tugas', [WorkerReportController::class, 'index'])->name('teknisi.assignments.index');
         
         // 3. Riwayat (Masih di TeknisiController)
         Route::get('/riwayat', [TeknisiController::class, 'history'])->name('teknisi.history');
@@ -66,9 +66,9 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/profil/info', [WorkerProfileController::class, 'updateInfo'])->name('teknisi.profile.update.info');
         Route::put('/profil/password', [WorkerProfileController::class, 'updatePassword'])->name('teknisi.profile.update.password');
 
-        // 5. Input Laporan
-        Route::get('/laporan/create/{id_pendaftaran}', [ReportController::class, 'create'])->name('teknisi.laporan.create');
-        Route::post('/laporan', [ReportController::class, 'store'])->name('teknisi.laporan.store');
+        // 4. Input Laporan
+        Route::get('/laporan/create/{id_pendaftaran}', [WorkerReportController::class, 'create'])->name('teknisi.laporan.create');
+        Route::post('/laporan', [WorkerReportController::class, 'store'])->name('teknisi.laporan.store');
     });
 
 });

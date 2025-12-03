@@ -51,7 +51,7 @@
                 @endif
             </div>
 
-            {{-- Tombol Lapor --}}
+            {{-- Tombol Lapor (Mengarah ke Route Teknisi) --}}
             <a href="{{ route('teknisi.laporan.create', $job->id) }}" class="flex items-center justify-center gap-2 w-full {{ $priority ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/30' : 'bg-slate-700 hover:bg-slate-800' }} text-white px-4 py-3 rounded-xl font-bold shadow-md transition transform active:scale-95">
                 <i class="fas fa-camera"></i>
                 Selesaikan & Lapor
