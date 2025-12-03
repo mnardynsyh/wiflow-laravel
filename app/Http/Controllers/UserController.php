@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Pendaftaran; // Import Model
+use App\Models\LaporanInstalasi; // Import Model
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -40,7 +41,6 @@ class UserController extends Controller
             'role'     => 'required|in:admin,teknisi',
         ]);
 
-        // Hash password sebelum simpan
         $validatedData['password'] = Hash::make($request->password);
 
         User::create($validatedData);
@@ -67,22 +67,18 @@ class UserController extends Controller
         $rules = [
             'nama'  => 'required|string|max:255',
             'role'  => 'required|in:admin,teknisi',
-            // Ignore id user ini saat cek unique email
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
         ];
 
-        // Jika password diisi, validasi panjangnya
         if ($request->filled('password')) {
             $rules['password'] = 'min:6';
         }
 
         $validatedData = $request->validate($rules);
 
-        // Jika password diisi, hash password baru
         if ($request->filled('password')) {
             $validatedData['password'] = Hash::make($request->password);
         } else {
-            // Jika kosong, hapus key password agar tidak menimpa password lama dengan null/kosong
             unset($validatedData['password']);
         }
 
@@ -92,15 +88,25 @@ class UserController extends Controller
     }
 
     /**
-     * Hapus user
+     * Hapus user dengan Pengecekan Relasi
      */
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
         
-        // Opsional: Cegah user menghapus dirinya sendiri
+        // 1. Cegah hapus diri sendiri
         if (Auth::id() == $user->id) {
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+
+        // 2. CEK RELASI: Apakah teknisi ini punya riwayat Pendaftaran?
+        $hasPendaftaran = Pendaftaran::where('id_teknisi', $user->id)->exists();
+        
+        // 3. CEK RELASI: Apakah teknisi ini punya riwayat Laporan?
+        $hasLaporan = LaporanInstalasi::where('id_teknisi', $user->id)->exists();
+
+        if ($hasPendaftaran || $hasLaporan) {
+            return back()->with('error', 'Gagal hapus! User ini memiliki riwayat pekerjaan (Pendaftaran/Laporan). Data historis tidak boleh hilang.');
         }
 
         $user->delete();

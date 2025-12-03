@@ -18,7 +18,7 @@
         </a>
     </div>
 
-    {{-- Pesan Sukses --}}
+    {{-- Alert Pesan Sukses --}}
     @if(session('success'))
         <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg flex items-center gap-2 shadow-sm" role="alert">
             <i class="fas fa-check-circle"></i>
