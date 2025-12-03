@@ -3,153 +3,182 @@
 @section('title', 'Admin Dashboard - WifiNet')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-8">
 
     {{-- Header Section --}}
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-6">
         <div>
-            <h2 class="text-2xl font-bold tracking-tight text-gray-900">Dashboard Overview</h2>
-            <p class="text-sm text-gray-500">Ringkasan aktivitas dan laporan instalasi terkini.</p>
+            <h2 class="text-3xl font-extrabold tracking-tight text-gray-900">Dashboard</h2>
+            <p class="mt-1 text-sm text-gray-500">Ringkasan operasional dan aktivitas terbaru.</p>
         </div>
-        {{-- Tanggal Hari Ini (Opsional) --}}
-        <div class="hidden md:block text-sm text-gray-500 bg-white border border-gray-200 px-3 py-1.5 rounded-lg shadow-sm">
-            <i class="far fa-calendar-alt mr-2"></i> {{ now()->translatedFormat('l, d F Y') }}
+        <div class="flex items-center gap-3">
+            <div class="hidden md:flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm text-sm font-medium text-gray-600">
+                <i class="far fa-calendar-alt text-gray-400"></i>
+                {{ now()->translatedFormat('l, d F Y') }}
+            </div>
+            {{-- Tombol Laporan Cepat --}}
+            <a href="{{ route('reports.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:-translate-y-0.5">
+                <i class="fas fa-plus"></i>
+                <span>Input Laporan</span>
+            </a>
         </div>
     </div>
 
     {{-- KPI Cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {{-- Update grid-cols-2 menjadi grid-cols-3 agar muat 3 kartu --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         
-        <!-- Card 1: Total Laporan -->
-        <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-5 flex items-center gap-4 transition hover:shadow-md">
-            <div class="w-14 h-14 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
-                <i class="fas fa-check-circle text-2xl text-emerald-600"></i>
-            </div>
-            <div class="flex-1">
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Total Laporan Selesai</p>
-                <div class="mt-1 flex items-baseline gap-2">
-                    <span class="text-2xl font-extrabold text-slate-800">{{ number_format($laporan->count()) }}</span>
-                    <span class="text-xs text-slate-400 font-medium">laporan</span>
+        <!-- Card 1: Pendaftaran Baru (Ditambahkan) -->
+        <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 group">
+            <div class="absolute right-0 top-0 h-full w-1 bg-amber-500"></div> {{-- Aksen warna --}}
+            <div class="p-6 flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Pendaftaran Baru</p>
+                    <div class="flex items-baseline gap-2">
+                        {{-- Mengambil jumlah status Pending langsung dari Model --}}
+                        <span class="text-4xl font-extrabold text-slate-800 tracking-tight">
+                            {{ \App\Models\Pendaftaran::where('status', 'Pending')->count() }}
+                        </span>
+                        <span class="text-sm font-medium text-slate-400">permintaan</span>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-xs text-slate-500 bg-slate-50 w-fit px-2 py-1 rounded border border-slate-100">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        </span>
+                        <span>Menunggu verifikasi</span>
+                    </div>
                 </div>
-                <p class="mt-2 text-xs text-slate-400 flex items-center gap-1">
-                    <i class="far fa-clock"></i>
-                    Terbaru: {{ $laporan->first()?->created_at->format('d M H:i') ?? '-' }}
-                </p>
+                <div class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-inbox text-2xl"></i>
+                </div>
             </div>
         </div>
 
-        <!-- Card 2: Teknisi Terdaftar -->
-        <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-5 flex items-center gap-4 transition hover:shadow-md">
-            <div class="w-14 h-14 rounded-xl bg-sky-50 flex items-center justify-center border border-sky-100">
-                <i class="fas fa-users-cog text-2xl text-sky-600"></i>
-            </div>
-            <div class="flex-1">
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Teknisi Terdaftar</p>
-                <div class="mt-1 flex items-baseline gap-2">
-                    {{-- Menggunakan null coalescing operator (??) untuk mencegah error jika variabel belum ada --}}
-                    <span class="text-2xl font-extrabold text-slate-800">{{ $jumlahTeknisi ?? 0 }}</span>
-                    <span class="text-xs text-slate-400 font-medium">personil</span>
+        <!-- Card 2: Total Laporan -->
+        <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 group">
+            <div class="absolute right-0 top-0 h-full w-1 bg-emerald-500"></div> {{-- Aksen warna --}}
+            <div class="p-6 flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Selesai</p>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl font-extrabold text-slate-800 tracking-tight">{{ number_format($laporan->count()) }}</span>
+                        <span class="text-sm font-medium text-slate-400">laporan</span>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-xs text-slate-500 bg-slate-50 w-fit px-2 py-1 rounded border border-slate-100">
+                        <i class="far fa-clock text-emerald-500"></i>
+                        <span>Terbaru: {{ $laporan->first()?->created_at->format('d M') ?? '-' }}</span>
+                    </div>
                 </div>
-                <p class="mt-2 text-xs text-emerald-600 font-medium flex items-center gap-1">
-                    <i class="fas fa-circle text-[8px]"></i> Siap bertugas
-                </p>
+                <div class="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-clipboard-check text-2xl"></i>
+                </div>
             </div>
         </div>
 
-        <!-- Card 3: System Status -->
-        <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-5 flex items-center gap-4 transition hover:shadow-md">
-            <div class="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center border border-amber-100">
-                <i class="fas fa-server text-2xl text-amber-600"></i>
-            </div>
-            <div class="flex-1">
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Status Sistem</p>
-                <div class="mt-1 flex items-baseline gap-2">
-                    <span class="text-2xl font-extrabold text-emerald-600">Online</span>
-                    <span class="text-xs text-slate-400 font-medium">Stable</span>
+        <!-- Card 3: Teknisi Terdaftar -->
+        <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 group">
+            <div class="absolute right-0 top-0 h-full w-1 bg-blue-500"></div> {{-- Aksen warna --}}
+            <div class="p-6 flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Tim Teknisi</p>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl font-extrabold text-slate-800 tracking-tight">{{ $jumlahTeknisi ?? 0 }}</span>
+                        <span class="text-sm font-medium text-slate-400">personil</span>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-xs text-slate-500 bg-slate-50 w-fit px-2 py-1 rounded border border-slate-100">
+                        <i class="fas fa-circle text-blue-500 text-[8px]"></i>
+                        <span>Siap bertugas</span>
+                    </div>
                 </div>
-                <p class="mt-2 text-xs text-slate-400 flex items-center gap-1">
-                    <i class="fas fa-sync-alt"></i>
-                    Check: {{ now()->format('H:i') }} WIB
-                </p>
+                <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-users-gear text-2xl"></i>
+                </div>
             </div>
         </div>
+
+    </div>
+
+    {{-- Section Title --}}
+    <div class="flex items-center gap-2 text-gray-800 mb-2">
+        <i class="fas fa-history text-blue-600"></i>
+        <h3 class="text-lg font-bold">Riwayat Laporan Terbaru</h3>
     </div>
 
     {{-- Tabel Laporan Instalasi --}}
-    <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
-        <div class="px-6 py-5 flex flex-col sm:flex-row items-center justify-between bg-white border-b border-slate-100 gap-4">
-            <div>
-                <h3 class="text-base font-bold text-slate-800">Laporan Instalasi Terbaru</h3>
-                <p class="text-xs text-slate-500 mt-1">Memantau hasil pekerjaan teknisi lapangan.</p>
-            </div>
-            
-            <div class="flex items-center gap-3">
-                <a href="{{ route('reports.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow transition-all">
-                    <i class="fas fa-plus"></i>
-                    <span>Buat Laporan Manual</span>
-                </a>
-            </div> 
-        </div>
-
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-100">
-                <thead class="bg-slate-50/50">
-                    <tr class="text-xs text-slate-500 uppercase tracking-wider">
-                        <th scope="col" class="px-6 py-3 text-left font-semibold">Tanggal & Waktu</th>
-                        <th scope="col" class="px-6 py-3 text-left font-semibold">Teknisi</th>
-                        <th scope="col" class="px-6 py-3 text-left font-semibold">ID Pendaftaran</th>
-                        <th scope="col" class="px-6 py-3 text-center font-semibold">Bukti Foto</th>
-                        <th scope="col" class="px-6 py-3 text-center font-semibold">Aksi</th>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal & Waktu</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Teknisi</th>
+                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">ID & Paket</th>
+                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Bukti</th>
+                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-slate-100">
+                <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($laporan as $item)
-                    <tr class="hover:bg-slate-50 transition duration-150">
+                    <tr class="hover:bg-slate-50/80 transition-colors duration-150">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex flex-col">
-                                <span class="text-sm font-bold text-slate-700">{{ $item->created_at->format('d M Y') }}</span>
-                                <span class="text-xs text-slate-400">{{ $item->created_at->format('H:i') }} WIB</span>
+                                <span class="text-sm font-bold text-gray-800">{{ $item->created_at->format('d M Y') }}</span>
+                                <div class="flex items-center gap-1.5 mt-1">
+                                    <i class="far fa-clock text-gray-400 text-xs"></i>
+                                    <span class="text-xs text-gray-500 font-medium">{{ $item->created_at->format('H:i') }} WIB</span>
+                                </div>
                             </div>
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold border border-indigo-200">
+                                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-600 text-xs font-bold border border-blue-200 shadow-sm">
                                     {{ strtoupper(substr($item->teknisi->nama ?? 'U', 0, 1)) }}
                                 </div>
                                 <div class="flex flex-col">
-                                    <span class="text-sm font-medium text-slate-700">{{ $item->teknisi->nama ?? 'User Terhapus' }}</span>
-                                    <span class="text-xs text-slate-400">Teknisi</span>
+                                    <span class="text-sm font-semibold text-gray-800">{{ $item->teknisi->nama ?? 'User Terhapus' }}</span>
+                                    <span class="text-xs text-gray-500">Teknisi Lapangan</span>
                                 </div>
                             </div>
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="#" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100 hover:bg-blue-100 transition">
-                                #{{ $item->pendaftaran->id ?? '-' }}
-                            </a>
+                            <div class="flex flex-col gap-1">
+                                <span class="inline-flex items-center w-fit px-2.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                    #{{ $item->pendaftaran->id ?? '-' }}
+                                </span>
+                                @if($item->pendaftaran && $item->pendaftaran->paket)
+                                    <span class="text-xs font-medium text-blue-600 flex items-center gap-1">
+                                        <i class="fas fa-wifi text-[10px]"></i> {{ Str::limit($item->pendaftaran->paket->nama_paket, 20) }}
+                                    </span>
+                                @endif
+                            </div>
                         </td>
 
                         <td class="px-6 py-4 text-center whitespace-nowrap">
                             @if($item->bukti_foto)
-                                <a href="{{ asset('storage/' . $item->bukti_foto) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200 hover:bg-white hover:border-blue-300 hover:text-blue-600 transition shadow-sm group">
-                                    <i class="fas fa-image group-hover:scale-110 transition-transform"></i> Lihat
+                                <a href="{{ asset('storage/' . $item->bukti_foto) }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:text-blue-600 hover:border-blue-300 transition shadow-sm group">
+                                    <i class="fas fa-image text-gray-400 group-hover:text-blue-500 transition-colors"></i> 
+                                    <span>Lihat Foto</span>
                                 </a>
                             @else
-                                <span class="text-xs italic text-slate-400 bg-slate-50 px-2 py-1 rounded">Tidak ada</span>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
+                                    -
+                                </span>
                             @endif
                         </td>
 
                         <td class="px-6 py-4 text-center whitespace-nowrap">
                             <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('reports.edit', $item->id) }}" class="p-2 rounded-lg text-amber-500 hover:bg-amber-50 transition" title="Edit Laporan">
+                                <a href="{{ route('reports.edit', $item->id) }}" class="p-2 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition" title="Edit Laporan">
                                     <i class="fas fa-pencil-alt"></i>
                                 </a>
 
                                 <form action="{{ route('reports.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Hapus laporan ini secara permanen?');" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-2 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition" title="Hapus Laporan">
+                                    <button type="submit" class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition" title="Hapus Laporan">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
@@ -158,13 +187,15 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center">
+                        <td colspan="5" class="px-6 py-16 text-center">
                             <div class="flex flex-col items-center justify-center">
-                                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
                                     <i class="fas fa-folder-open text-slate-300 text-3xl"></i>
                                 </div>
-                                <p class="text-slate-500 font-medium">Belum ada laporan instalasi.</p>
-                                <p class="text-slate-400 text-xs mt-1">Data laporan akan muncul di sini setelah teknisi melakukan input.</p>
+                                <h3 class="text-base font-semibold text-gray-900">Belum ada data laporan</h3>
+                                <p class="text-slate-500 text-sm mt-1 max-w-sm mx-auto">
+                                    Laporan instalasi akan muncul di sini setelah teknisi menyelesaikan tugas di lapangan.
+                                </p>
                             </div>
                         </td>
                     </tr>

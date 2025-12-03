@@ -59,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/tugas', [WorkerReportController::class, 'index'])->name('teknisi.assignments.index');
         
         // 3. Riwayat (Masih di TeknisiController)
-        Route::get('/riwayat', [TeknisiController::class, 'history'])->name('teknisi.history');
+        Route::get('/riwayat', [WorkerDashboardController::class, 'history'])->name('teknisi.history');
         
         // 4. Profil & Ganti Password (MENGGUNAKAN WORKER PROFILE CONTROLLER)
         Route::get('/profil', [WorkerProfileController::class, 'index'])->name('teknisi.profile');

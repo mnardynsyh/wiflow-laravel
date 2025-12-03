@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Internet Ultra Cepat - WifiNet')
+@section('title', 'WifiNet - Internet Fiber Optik Tanpa Batas')
 
 @push('styles')
 <style>
@@ -9,7 +9,7 @@
         background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.9) 100%), url('https://images.unsplash.com/photo-1544197150-b99a580bbcbf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
         background-size: cover;
         background-position: center;
-        background-attachment: fixed; /* Parallax feel */
+        background-attachment: fixed;
     }
     .blob {
         position: absolute;
@@ -17,10 +17,65 @@
         z-index: 0;
         opacity: 0.4;
     }
+    /* Animasi untuk Toast */
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    .toast-animate {
+        animation: slideIn 0.4s ease-out forwards;
+    }
 </style>
 @endpush
 
 @section('content')
+
+    {{-- 
+        FLOATING ALERTS (TOAST) 
+        Menggunakan Alpine.js untuk auto-hide dan dismiss
+    --}}
+    <div class="fixed top-24 right-5 z-50 flex flex-col gap-3 w-full max-w-sm pointer-events-none">
+        
+        {{-- Success Alert --}}
+        @if(session('success'))
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" 
+             class="pointer-events-auto bg-white border-l-4 border-emerald-500 shadow-2xl rounded-lg p-4 flex items-start gap-3 transform transition-all duration-300 toast-animate">
+            <div class="text-emerald-500 mt-0.5">
+                <i class="fas fa-check-circle text-xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 class="font-bold text-gray-800 text-sm">Berhasil!</h4>
+                <p class="text-gray-600 text-sm mt-1">{{ session('success') }}</p>
+            </div>
+            <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        @endif
+
+        {{-- Error Alert --}}
+        @if ($errors->any())
+        <div x-data="{ show: true }" x-show="show" 
+             class="pointer-events-auto bg-white border-l-4 border-red-500 shadow-2xl rounded-lg p-4 flex items-start gap-3 transform transition-all duration-300 toast-animate">
+            <div class="text-red-500 mt-0.5">
+                <i class="fas fa-exclamation-circle text-xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 class="font-bold text-gray-800 text-sm">Periksa Input Anda</h4>
+                <ul class="mt-1 space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li class="text-gray-600 text-xs flex items-center gap-1">
+                            <i class="fas fa-dot-circle text-[6px]"></i> {{ $error }}
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+            <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        @endif
+    </div>
 
     <!-- Hero Section -->
     <header id="home" class="hero-bg text-white min-h-[700px] flex items-center relative overflow-hidden">
@@ -28,7 +83,7 @@
         <div class="blob bg-blue-500 w-96 h-96 rounded-full top-0 right-0 -mr-20 -mt-20 animate-pulse"></div>
         <div class="blob bg-purple-600 w-80 h-80 rounded-full bottom-0 left-0 -ml-20 -mb-20 animate-pulse" style="animation-delay: 2s;"></div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-10">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div class="max-w-2xl">
                     <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-200 text-sm font-semibold mb-8 backdrop-blur-sm">
@@ -59,57 +114,33 @@
                         </a>
                     </div>
 
-                    <div class="mt-10 flex items-center gap-6 text-sm text-slate-400">
+                    <div class="mt-12 pt-8 border-t border-white/10 flex flex-wrap gap-8 text-sm text-slate-400">
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-blue-400"></i> Gratis Instalasi
+                            <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            Gratis Instalasi
                         </div>
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-blue-400"></i> Support 24/7
+                            <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            Support 24/7
                         </div>
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-check-circle text-blue-400"></i> Unlimited
+                            <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            Unlimited Kuota
                         </div>
                     </div>
                 </div>
                 
-                <!-- Hero Image/Illustration (Optional, placeholder for layout balance) -->
-                <div class="hidden lg:block relative">
-                     <!-- Could be a 3D router image or similar, keeping it clean for now with just layout space -->
-                </div>
+                <!-- Spacer for Grid Balance -->
+                <div class="hidden lg:block relative h-full min-h-[400px]"></div>
             </div>
         </div>
     </header>
-
-    <!-- Alerts -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-        @if(session('success'))
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl p-4 flex items-center shadow-lg transform transition-all animate-fade-in-up">
-                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                    <i class="fas fa-check text-emerald-600"></i>
-                </div>
-                <div>
-                    <span class="font-bold block">Pendaftaran Berhasil!</span>
-                    {{ session('success') }}
-                </div>
-                <button type="button" class="ml-auto text-emerald-400 hover:text-emerald-600" onclick="this.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        @endif
-        @if ($errors->any())
-            <div class="bg-red-50 border border-red-200 text-red-800 rounded-2xl p-4 shadow-lg">
-                <div class="flex items-center mb-2">
-                    <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
-                    <span class="font-bold">Perhatian:</span>
-                </div>
-                <ul class="list-disc list-inside text-sm ml-5 space-y-1">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-    </div>
 
     <!-- Pricing Section -->
     <section id="paket" class="py-24 bg-slate-50 relative">
@@ -120,56 +151,65 @@
                     Simpel, Transparan, <br> <span class="text-blue-600">Terjangkau.</span>
                 </h2>
                 <p class="mt-4 text-xl text-slate-500">
-                    Semua paket sudah termasuk modem WiFi performa tinggi dan akses unlimited tanpa FUP.
+                    Pilih kecepatan yang sesuai dengan kebutuhan digital Anda. Semua paket sudah termasuk modem WiFi 5Ghz.
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                @foreach($pakets as $paket)
-                <div class="group relative bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-300 border border-slate-100 hover:-translate-y-2 flex flex-col">
-                    <!-- Decor Header -->
-                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-t-[2rem] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    
-                    <div class="mb-6">
-                        <h3 class="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{{ $paket->nama_paket }}</h3>
-                        <p class="text-slate-500 text-sm mt-2 min-h-[40px]">{{ $paket->deskripsi }}</p>
+            @if($pakets->isEmpty())
+                <div class="text-center py-12 bg-white rounded-2xl border border-dashed border-slate-300">
+                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
+                        <i class="fas fa-box-open text-3xl"></i>
                     </div>
-
-                    <div class="flex items-baseline mb-8">
-                        <span class="text-5xl font-extrabold text-slate-900 tracking-tight">
-                            {{ number_format($paket->harga / 1000, 0) }}k
-                        </span>
-                        <span class="text-slate-400 font-medium ml-2">/ bulan</span>
-                    </div>
-
-                    <ul class="space-y-4 mb-8 flex-1">
-                        <li class="flex items-center text-slate-600 text-sm">
-                            <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
-                                <i class="fas fa-check text-blue-500 text-xs"></i>
-                            </div>
-                            Internet Unlimited
-                        </li>
-                        <li class="flex items-center text-slate-600 text-sm">
-                            <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
-                                <i class="fas fa-wifi text-blue-500 text-xs"></i>
-                            </div>
-                            Modem WiFi 5Ghz
-                        </li>
-                        <li class="flex items-center text-slate-600 text-sm">
-                            <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
-                                <i class="fas fa-headset text-blue-500 text-xs"></i>
-                            </div>
-                            Prioritas Support
-                        </li>
-                    </ul>
-
-                    <button onclick="pilihPaket({{ $paket->id }})" class="w-full py-4 rounded-xl border-2 border-slate-100 text-slate-700 font-bold hover:border-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group-hover:border-blue-200">
-                        Pilih Paket
-                        <i class="fas fa-arrow-right text-sm opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"></i>
-                    </button>
+                    <p class="text-slate-500 font-medium">Belum ada paket layanan yang tersedia saat ini.</p>
                 </div>
-                @endforeach
-            </div>
+            @else
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @foreach($pakets as $paket)
+                    <div class="group relative bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-blue-900/10 transition-all duration-300 border border-slate-100 hover:-translate-y-2 flex flex-col h-full">
+                        <!-- Decor Header -->
+                        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-t-[2rem] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{{ $paket->nama_paket }}</h3>
+                            <p class="text-slate-500 text-sm mt-2 min-h-[40px] line-clamp-2">{{ $paket->deskripsi }}</p>
+                        </div>
+
+                        <div class="flex items-baseline mb-8">
+                            <span class="text-5xl font-extrabold text-slate-900 tracking-tight">
+                                {{ number_format($paket->harga / 1000, 0) }}k
+                            </span>
+                            <span class="text-slate-400 font-medium ml-2">/ bulan</span>
+                        </div>
+
+                        <ul class="space-y-4 mb-8 flex-1">
+                            <li class="flex items-center text-slate-600 text-sm">
+                                <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fas fa-check text-blue-500 text-xs"></i>
+                                </div>
+                                Internet Unlimited
+                            </li>
+                            <li class="flex items-center text-slate-600 text-sm">
+                                <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fas fa-wifi text-blue-500 text-xs"></i>
+                                </div>
+                                Modem WiFi High Speed
+                            </li>
+                            <li class="flex items-center text-slate-600 text-sm">
+                                <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fas fa-headset text-blue-500 text-xs"></i>
+                                </div>
+                                Prioritas Support
+                            </li>
+                        </ul>
+
+                        <button onclick="pilihPaket({{ $paket->id }})" class="w-full py-4 rounded-xl border-2 border-slate-100 text-slate-700 font-bold hover:border-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group-hover:border-blue-200">
+                            Pilih Paket
+                            <i class="fas fa-arrow-right text-sm opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"></i>
+                        </button>
+                    </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </section>
 

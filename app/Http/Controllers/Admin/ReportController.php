@@ -25,7 +25,7 @@ class ReportController extends Controller
      */
     public function create()
     {
-        $pendaftaran = Pendaftaran::where('status', 'dijadwalkan')->get();
+        $pendaftaran = Pendaftaran::where('status', 'pending')->get();
         $teknisi = User::where('role', 'teknisi')->get();
         
         return view('admin.reports.create', compact('pendaftaran', 'teknisi'));

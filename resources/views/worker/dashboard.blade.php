@@ -5,77 +5,105 @@
 @section('content')
 <div class="space-y-8">
     
-    {{-- Header & Statistik --}}
-    <div>
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tight text-gray-900">Halo, {{ Auth::user()->nama }} 👋</h1>
-                <p class="text-sm text-gray-500">Selamat bertugas! Berikut performa Anda hari ini.</p>
-            </div>
-            <div class="hidden md:block text-sm font-medium text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
-                <i class="far fa-calendar-alt mr-2"></i> {{ now()->translatedFormat('l, d F Y') }}
-            </div>
+    {{-- Header Section --}}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-6">
+        <div>
+            <h2 class="text-3xl font-extrabold tracking-tight text-gray-900">Halo, {{ Auth::user()->nama }} !</h2>
+            <p class="mt-1 text-sm text-gray-500">Selamat bertugas! Berikut ringkasan performa Anda hari ini.</p>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <!-- Card Hari Ini -->
-            <div class="bg-blue-600 rounded-xl p-5 text-white shadow-lg shadow-blue-200">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-blue-100 text-sm font-medium">Jadwal Hari Ini</p>
-                        <h3 class="text-3xl font-bold mt-1">{{ $stats['hari_ini'] }}</h3>
-                    </div>
-                    <div class="p-2 bg-white/20 rounded-lg">
-                        <i class="fas fa-calendar-day text-xl"></i>
-                    </div>
-                </div>
-                <p class="text-xs text-blue-100 mt-4">Pelanggan menunggu kedatangan Anda.</p>
-            </div>
-
-            <!-- Card Total Pending -->
-            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-slate-500 text-sm font-medium">Total Pending</p>
-                        <h3 class="text-3xl font-bold text-slate-800 mt-1">{{ $stats['total_pending'] }}</h3>
-                    </div>
-                    <div class="p-2 bg-amber-50 text-amber-600 rounded-lg">
-                        <i class="fas fa-clock text-xl"></i>
-                    </div>
-                </div>
-                <p class="text-xs text-slate-400 mt-4">Total tugas yang belum selesai.</p>
-            </div>
-
-            <!-- Card Selesai Bulan Ini -->
-            <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-slate-500 text-sm font-medium">Selesai Bulan Ini</p>
-                        <h3 class="text-3xl font-bold text-emerald-600 mt-1">{{ $stats['selesai_bulan_ini'] }}</h3>
-                    </div>
-                    <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-                        <i class="fas fa-check-circle text-xl"></i>
-                    </div>
-                </div>
-                <p class="text-xs text-slate-400 mt-4">Kinerja yang bagus, pertahankan!</p>
-            </div>
+        <div class="hidden md:flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg shadow-sm text-sm font-medium text-gray-600">
+            <i class="far fa-calendar-alt text-gray-400"></i>
+            {{ now()->translatedFormat('l, d F Y') }}
         </div>
     </div>
 
-    {{-- Ringkasan Prioritas Hari Ini --}}
+    {{-- KPI Cards (Grid Outline Style) --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Card 1: Jadwal Hari Ini -->
+        <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 group">
+            <div class="absolute right-0 top-0 h-full w-1 bg-blue-500"></div> {{-- Aksen Warna --}}
+            <div class="p-6 flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Jadwal Hari Ini</p>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl font-extrabold text-slate-800 tracking-tight">{{ $stats['hari_ini'] }}</span>
+                        <span class="text-sm font-medium text-slate-400">tugas</span>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-xs text-slate-500 bg-slate-50 w-fit px-2 py-1 rounded border border-slate-100">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                        </span>
+                        <span>Menunggu kedatangan</span>
+                    </div>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-calendar-day text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Total Pending -->
+        <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 group">
+            <div class="absolute right-0 top-0 h-full w-1 bg-amber-500"></div>
+            <div class="p-6 flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Total Pending</p>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl font-extrabold text-slate-800 tracking-tight">{{ $stats['total_pending'] }}</span>
+                        <span class="text-sm font-medium text-slate-400">tugas</span>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-xs text-slate-500 bg-slate-50 w-fit px-2 py-1 rounded border border-slate-100">
+                        <i class="fas fa-clock text-amber-500"></i>
+                        <span>Total antrian aktif</span>
+                    </div>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-hourglass-half text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Selesai Bulan Ini -->
+        <div class="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-300 group">
+            <div class="absolute right-0 top-0 h-full w-1 bg-emerald-500"></div>
+            <div class="p-6 flex items-start justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Selesai Bulan Ini</p>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-4xl font-extrabold text-slate-800 tracking-tight">{{ $stats['selesai_bulan_ini'] }}</span>
+                        <span class="text-sm font-medium text-slate-400">instalasi</span>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2 text-xs text-slate-500 bg-slate-50 w-fit px-2 py-1 rounded border border-slate-100">
+                        <i class="fas fa-check-circle text-emerald-500"></i>
+                        <span>Kinerja bulan ini</span>
+                    </div>
+                </div>
+                <div class="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-clipboard-check text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    
     @if($todayTasks->isNotEmpty())
     <div>
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                <i class="fas fa-fire text-red-500"></i> Prioritas Hari Ini
-            </h2>
-            <a href="{{ route('teknisi.assignments.index') }}" class="text-sm text-blue-600 hover:underline">Lihat Semua Tugas &rarr;</a>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-2 text-gray-800">
+                <i class="fas fa-fire text-red-500 text-xl"></i>
+                <h3 class="text-xl font-bold">Prioritas Hari Ini</h3>
+            </div>
+            <a href="{{ route('teknisi.assignments.index') }}" class="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition">
+                Lihat Semua Tugas &rarr;
+            </a>
         </div>
         
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div class="flex flex-col gap-4">
             @foreach($todayTasks as $job)
-                {{-- Menggunakan Partial Card --}}
-                @include('teknisi.partials.job-card', ['job' => $job, 'priority' => true])
+                @include('partials.job-card', ['job' => $job, 'priority' => true])
             @endforeach
         </div>
     </div>

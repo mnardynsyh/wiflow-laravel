@@ -3,14 +3,14 @@
 @section('title', 'Proses Pendaftaran')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+<div class="space-y-6">
     
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Verifikasi & Penugasan</h1>
             <p class="text-sm text-gray-500">Atur jadwal dan tugaskan teknisi untuk permintaan ini.</p>
         </div>
-        <a href="{{ route('pendaftaran.index') }}" class="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1 transition">
+        <a href="{{ route('pendaftaran.index') }}" class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-600 bg-white border border-slate-200 px-4 py-2 rounded-lg shadow-sm transition-all hover:bg-slate-50">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
     </div>
@@ -21,7 +21,7 @@
                 @csrf
                 @method('PUT')
 
-                {{-- INFO PELANGGAN (Sama seperti sebelumnya) --}}
+                {{-- INFO PELANGGAN --}}
                 <div class="mb-8">
                     <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
                         <i class="far fa-id-card text-blue-500"></i> Data Pelanggan
@@ -81,12 +81,11 @@
                             @error('tanggal_jadwal') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        {{-- Status Pengerjaan (ENUM FIXED) --}}
+                        {{-- Status Pengerjaan --}}
                         <div class="md:col-span-2">
                             <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">Update Status</label>
                             <div class="relative">
                                 <select name="status" id="status" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white py-2.5 px-4 pr-8">
-                                    {{-- Value harus SAMA PERSIS dengan database Enum --}}
                                     <option value="Pending" {{ $pendaftaran->status == 'Pending' ? 'selected' : '' }}>Pending (Menunggu Verifikasi)</option>
                                     <option value="Verified" {{ $pendaftaran->status == 'Verified' ? 'selected' : '' }}>Verified (Data Valid)</option>
                                     <option value="Scheduled" {{ $pendaftaran->status == 'Scheduled' ? 'selected' : '' }}>Scheduled (Tugaskan Teknisi)</option>

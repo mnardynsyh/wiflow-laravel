@@ -18,14 +18,6 @@
         </a>
     </div>
 
-    {{-- Pesan Sukses --}}
-    @if(session('success'))
-        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg flex items-center gap-2 shadow-sm" role="alert">
-            <i class="fas fa-check-circle"></i>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-
     {{-- Tabel Data --}}
     <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
