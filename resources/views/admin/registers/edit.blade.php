@@ -1,125 +1,136 @@
 @extends('layouts.app')
 
-@section('title', 'Proses Pendaftaran')
+@section('title', 'Manajemen Pendaftaran')
 
 @section('content')
 <div class="space-y-6">
-    
+
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Verifikasi & Penugasan</h1>
-            <p class="text-sm text-gray-500">Atur jadwal dan tugaskan teknisi untuk permintaan ini.</p>
+            <h1 class="text-2xl font-bold text-gray-800">
+                #{{ $pendaftaran->id }} - {{ $pendaftaran->nama_pelanggan }}
+            </h1>
+            <p class="text-sm text-gray-500">Kelola data pendaftaran dan penugasan teknisi.</p>
         </div>
-        <a href="{{ route('pendaftaran.index') }}" class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-600 bg-white border border-slate-200 px-4 py-2 rounded-lg shadow-sm transition-all hover:bg-slate-50">
-            <i class="fas fa-arrow-left"></i> Kembali
+        <a href="{{ route('pendaftaran.index') }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium">
+            <i class="fas fa-arrow-left mr-2"></i>Kembali
         </a>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="p-6 md:p-8">
-            <form action="{{ route('pendaftaran.update', $pendaftaran->id) }}" method="POST">
-                @csrf
-                @method('PUT')
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Status Pengerjaan</h3>
+        <div class="flex items-center w-full">
+            @php
+                $steps = ['Pending', 'Verified', 'Scheduled', 'Progress', 'Reported', 'Completed'];
+                $currentIdx = array_search($pendaftaran->status, $steps);
+            @endphp
 
-                {{-- INFO PELANGGAN --}}
-                <div class="mb-8">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
-                        <i class="far fa-id-card text-blue-500"></i> Data Pelanggan
+            @foreach($steps as $index => $step)
+                <div class="flex items-center {{ $loop->last ? '' : 'flex-1' }}">
+                    <div class="flex flex-col items-center relative z-10">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all
+                            {{ $index <= $currentIdx ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-gray-300 text-gray-400' }}">
+                            @if($index < $currentIdx) <i class="fas fa-check"></i> @else {{ $index + 1 }} @endif
+                        </div>
+                        <span class="absolute top-10 text-[10px] font-bold uppercase tracking-wide {{ $index <= $currentIdx ? 'text-blue-600' : 'text-gray-400' }}">
+                            {{ $step }}
+                        </span>
+                    </div>
+                    
+                    @if(!$loop->last)
+                        <div class="flex-1 h-1 mx-2 {{ $index < $currentIdx ? 'bg-blue-600' : 'bg-gray-200' }}"></div>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+        <div class="mb-6"></div> </div>
+
+    <form action="{{ route('pendaftaran.update', $pendaftaran->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="far fa-user text-blue-500"></i> Detail Pelanggan
                     </h3>
                     
-                    <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                    <div class="grid grid-cols-2 gap-6">
                         <div>
-                            <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Pelanggan</span>
-                            <div class="text-slate-800 font-semibold text-lg">{{ $pendaftaran->nama_pelanggan }}</div>
-                        </div>
-                        <div class="md:col-span-2">
-                            <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Alamat Pemasangan</span>
-                            <div class="text-slate-700">{{ $pendaftaran->alamat_pemasangan }}</div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">NIK</label>
+                            <div class="text-gray-800 font-medium">{{ $pendaftaran->nik_pelanggan }}</div>
                         </div>
                         <div>
-                            <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Paket</span>
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-indigo-100 text-indigo-700">
-                                {{ $pendaftaran->paket->nama_paket ?? 'Unknown' }}
-                            </span>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">No HP</label>
+                            <div class="text-gray-800 font-medium">{{ $pendaftaran->no_hp }}</div>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Alamat</label>
+                            <div class="text-gray-800">{{ $pendaftaran->alamat_pemasangan }}</div>
+                            @if($pendaftaran->koordinat)
+                                <a href="https://www.google.com/maps?q={{ $pendaftaran->koordinat }}" target="_blank" class="text-blue-600 text-xs hover:underline mt-1 inline-flex items-center">
+                                    <i class="fas fa-map-marker-alt mr-1"></i> Lihat di Google Maps
+                                </a>
+                            @endif
+                        </div>
+                         <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Paket Pilihan</label>
+                            <div class="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-bold">
+                                {{ $pendaftaran->paket->nama_paket ?? '-' }}
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {{-- FORM INPUT ADMIN --}}
-                <div class="mb-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 pb-2 border-b border-gray-100">
-                        <i class="fas fa-tasks text-blue-500"></i> Tindakan Admin
+            <div class="space-y-6">
+                
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 border-l-4 border-l-blue-500">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">
+                        <i class="fas fa-tasks text-blue-500 mr-2"></i>Dispatching
                     </h3>
+                    <p class="text-sm text-gray-500 mb-4">
+                        Pilih teknisi dan tanggal untuk menjadwalkan pemasangan. Status akan otomatis berubah menjadi <strong>Scheduled</strong>.
+                    </p>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        {{-- Pilih Teknisi --}}
-                        <div>
-                            <label for="id_teknisi" class="block text-sm font-semibold text-gray-700 mb-2">Tugaskan Teknisi</label>
-                            <div class="relative">
-                                <select name="id_teknisi" id="id_teknisi" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white py-2.5 px-4 pr-8">
-                                    <option value="">-- Pilih Teknisi --</option>
-                                    @foreach($teknisi as $t)
-                                        <option value="{{ $t->id }}" {{ (old('id_teknisi', $pendaftaran->id_teknisi) == $t->id) ? 'selected' : '' }}>
-                                            {{ $t->nama }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
-                                    <i class="fas fa-chevron-down text-xs"></i>
-                                </div>
-                            </div>
-                            @error('id_teknisi') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        {{-- Jadwal --}}
-                        <div>
-                            <label for="tanggal_jadwal" class="block text-sm font-semibold text-gray-700 mb-2">Jadwal Pemasangan</label>
-                            <input type="datetime-local" name="tanggal_jadwal" id="tanggal_jadwal"
-                                   value="{{ old('tanggal_jadwal', $pendaftaran->tanggal_jadwal ? \Carbon\Carbon::parse($pendaftaran->tanggal_jadwal)->format('Y-m-d\TH:i') : '') }}"
-                                   class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 py-2.5 px-4">
-                            @error('tanggal_jadwal') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        {{-- Status Pengerjaan --}}
-                        <div class="md:col-span-2">
-                            <label for="status" class="block text-sm font-semibold text-gray-700 mb-2">Update Status</label>
-                            <div class="relative">
-                                <select name="status" id="status" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white py-2.5 px-4 pr-8">
-                                    <option value="Pending" {{ $pendaftaran->status == 'Pending' ? 'selected' : '' }}>Pending (Menunggu Verifikasi)</option>
-                                    <option value="Verified" {{ $pendaftaran->status == 'Verified' ? 'selected' : '' }}>Verified (Data Valid)</option>
-                                    <option value="Scheduled" {{ $pendaftaran->status == 'Scheduled' ? 'selected' : '' }}>Scheduled (Tugaskan Teknisi)</option>
-                                    <option value="Progress" {{ $pendaftaran->status == 'Progress' ? 'selected' : '' }}>Progress (Sedang Dikerjakan)</option>
-                                    <option value="Reported" {{ $pendaftaran->status == 'Reported' ? 'selected' : '' }}>Reported (Laporan Masuk)</option>
-                                    <option value="Completed" {{ $pendaftaran->status == 'Completed' ? 'selected' : '' }}>Completed (Selesai Final)</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
-                                    <i class="fas fa-chevron-down text-xs"></i>
-                                </div>
-                            </div>
-                            <div class="mt-2 flex items-start gap-2 text-xs text-slate-500 bg-blue-50 p-2 rounded border border-blue-100">
-                                <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
-                                <span>
-                                    Pilih <strong>Scheduled</strong> agar muncul di dashboard Teknisi. <br>
-                                    Pilih <strong>Completed</strong> setelah Anda memverifikasi laporan teknisi.
-                                </span>
-                            </div>
-                            @error('status') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih Teknisi</label>
+                        <select name="id_teknisi" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 py-2.5 bg-gray-50">
+                            <option value="">-- Belum Ditugaskan --</option>
+                            @foreach($teknisi as $t)
+                                <option value="{{ $t->id }}" {{ (old('id_teknisi', $pendaftaran->id_teknisi) == $t->id) ? 'selected' : '' }}>
+                                    {{ $t->nama }} ({{ $t->email }})
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-                </div>
 
-                <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
-                    <a href="{{ route('pendaftaran.index') }}" class="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition">
-                        Batal
-                    </a>
-                    <button type="submit" class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md shadow-blue-500/20 transition transform active:scale-95 flex items-center gap-2">
-                        <i class="fas fa-save"></i> Simpan Perubahan
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Jadwal</label>
+                        <input type="datetime-local" name="tanggal_jadwal" 
+                               value="{{ old('tanggal_jadwal', $pendaftaran->tanggal_jadwal ? \Carbon\Carbon::parse($pendaftaran->tanggal_jadwal)->format('Y-m-d\TH:i') : '') }}"
+                               class="w-full rounded-lg border-gray-300 focus:ring-blue-500 bg-gray-50 py-2.5">
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-500/30 transition-all flex justify-center items-center gap-2">
+                        <i class="fas fa-save"></i> Simpan & Tugaskan
                     </button>
                 </div>
 
-            </form>
+                @if($pendaftaran->status == 'Reported')
+                <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                    <h4 class="font-bold text-green-800 text-sm mb-2">Laporan Diterima!</h4>
+                    <p class="text-xs text-green-700 mb-3">Teknisi telah menyelesaikan pekerjaan. Verifikasi laporan ini?</p>
+                    <button type="submit" name="action" value="complete" class="w-full py-2 bg-green-600 text-white text-sm font-bold rounded hover:bg-green-700">
+                        <i class="fas fa-check-double mr-1"></i> Selesaikan (Completed)
+                    </button>
+                </div>
+                @endif
+
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 @endsection

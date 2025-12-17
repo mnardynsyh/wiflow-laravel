@@ -16,7 +16,7 @@
             <i class="fas fa-plus"></i>
             <span>Tambah User Baru</span>
         </a>
-    </div>
+    </div> 
 
     {{-- Alert Pesan Sukses --}}
     @if(session('success'))

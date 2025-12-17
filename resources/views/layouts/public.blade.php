@@ -116,9 +116,9 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-white py-16 border-t border-slate-800">
+    <footer class="bg-slate-900 text-white py-4 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 pt-6">
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex items-center gap-2 mb-6">
                         <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">

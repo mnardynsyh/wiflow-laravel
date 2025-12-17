@@ -19,24 +19,22 @@ class DashboardController extends Controller
 
         // 1. Statistik
         $stats = [
-            // Fix: Gunakan status 'Scheduled' atau 'Progress' sesuai Enum database
             'hari_ini' => Pendaftaran::where('id_teknisi', $user->id)
                 ->whereIn('status', ['Scheduled', 'Progress']) 
-                ->whereDate('tanggal_jadwal', now()) // Cek tanggal hari ini
+                ->whereDate('tanggal_jadwal', now())
                 ->count(),
             
             'total_pending' => Pendaftaran::where('id_teknisi', $user->id)
                 ->whereIn('status', ['Scheduled', 'Progress'])
                 ->count(),
             
-            // Selesai = Reported (sudah lapor) atau Completed (sudah ACC admin)
             'selesai_bulan_ini' => Pendaftaran::where('id_teknisi', $user->id)
                 ->whereIn('status', ['Reported', 'Completed'])
                 ->whereMonth('updated_at', now()->month)
                 ->count(),
         ];
 
-        // 2. Ringkasan Tugas Hari Ini (Hanya preview 5 teratas)
+        // 2. Ringkasan Tugas Hari Ini
         $todayTasks = Pendaftaran::with('paket')
             ->where('id_teknisi', $user->id)
             ->whereIn('status', ['Scheduled', 'Progress']) // Fix status
@@ -56,7 +54,6 @@ class DashboardController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // Ambil data yang statusnya sudah Reported atau Completed
         $riwayat = Pendaftaran::with(['paket', 'laporanInstalasi'])
             ->where('id_teknisi', $user->id)
             ->whereIn('status', ['Reported', 'Completed'])

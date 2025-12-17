@@ -14,8 +14,7 @@ use App\Http\Controllers\Admin\ReportController;
 // Import Controller Teknisi (Worker Namespace)
 use App\Http\Controllers\Worker\DashboardController as WorkerDashboardController;
 use App\Http\Controllers\Worker\ReportController as WorkerReportController;
-use App\Http\Controllers\Worker\ProfileController as WorkerProfileController; // <-- Controller Profil Baru
-use App\Http\Controllers\TeknisiController; // Sisa untuk History
+use App\Http\Controllers\Worker\ProfileController as WorkerProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +25,7 @@ use App\Http\Controllers\TeknisiController; // Sisa untuk History
 // --- 1. PUBLIC ROUTES ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/daftar', [RegistrationController::class, 'store'])->name('pendaftaran.store');
+Route::get('/pendaftaran-berhasil/{id}', [RegistrationController::class, 'success'])->name('pendaftaran.sukses');
 
 // --- 2. AUTHENTICATION ROUTES ---
 Route::get('/login', [AuthController::class, 'index'])->name('login');

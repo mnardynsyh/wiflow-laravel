@@ -17,15 +17,22 @@ class RegistrationController extends Controller
         if ($user->role === 'admin') {
             $pendaftarans = Pendaftaran::with(['paket', 'teknisi'])->latest()->get();
         } else {
-            // Fallback untuk teknisi jika akses route ini
             $pendaftarans = Pendaftaran::with(['paket'])
                 ->where('id_teknisi', $user->id)
-                ->whereIn('status', ['Scheduled', 'Progress']) // Teknisi melihat yg dijadwalkan/proses
+                ->whereIn('status', ['Scheduled', 'Progress'])
                 ->latest()
                 ->get();
         }
 
         return view('admin.registers.index', compact('pendaftarans'));
+    }
+
+    public function success($id)
+    {
+        // Cari data berdasarkan ID
+        $pendaftaran = Pendaftaran::with('paket')->findOrFail($id);
+        
+        return view('public.success', compact('pendaftaran'));
     }
 
     public function store(Request $request)
@@ -44,9 +51,9 @@ class RegistrationController extends Controller
         $validated['id_teknisi'] = null;  
         $validated['tanggal_jadwal'] = null;
 
-        Pendaftaran::create($validated);
+        $pendaftaran = Pendaftaran::create($validated);
 
-        return redirect('/#daftar')->with('success', 'Pendaftaran berhasil dikirim! Tim kami akan segera menghubungi Anda.');
+        return redirect()->route('pendaftaran.sukses', $pendaftaran->id);
     }
 
     public function show($id)
@@ -64,20 +71,43 @@ class RegistrationController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $pendaftaran = Pendaftaran::findOrFail($id);
+{
+    $pendaftaran = Pendaftaran::findOrFail($id);
 
-        // Validasi Sesuai Enum Database (Case Sensitive)
-        $validated = $request->validate([
-            'id_teknisi'     => 'nullable|exists:users,id', 
-            'tanggal_jadwal' => 'nullable|date',            
-            'status'         => 'required|in:Pending,Verified,Scheduled,Progress,Reported,Completed', 
-        ]);
+    $validated = $request->validate([
+        'id_teknisi'     => 'nullable|exists:users,id',
+        'tanggal_jadwal' => 'nullable|date',
+    ]);
 
-        $pendaftaran->update($validated);
+    // 2. LOGIKA OTOMATISASI STATUS
+    $newStatus = $pendaftaran->status;
 
-        return redirect()->route('pendaftaran.index')->with('success', 'Status pendaftaran berhasil diperbarui!');
+    // Skenario A: Admin menugaskan Teknisi & Jadwal
+    if ($request->filled('id_teknisi') && $request->filled('tanggal_jadwal')) {
+        if (in_array($pendaftaran->status, ['Pending', 'Verified'])) {
+            $newStatus = 'Scheduled';
+        }
     }
+    
+    // Skenario B: Admin membatalkan tugas (kosongkan teknisi)
+    elseif (empty($request->id_teknisi) && $pendaftaran->status == 'Scheduled') {
+        $newStatus = 'Verified';
+    }
+
+    // Skenario C: Admin melakukan finalisasi (Completed)
+    if ($request->has('action') && $request->action == 'complete') {
+        $newStatus = 'Completed';
+    }
+
+    // 3. Gabungkan data
+    $validated['status'] = $newStatus;
+
+    // Update Data
+    $pendaftaran->update($validated);
+
+    return redirect()->route('pendaftaran.index')
+        ->with('success', "Data diperbarui! Status sekarang: $newStatus");
+}
 
     public function destroy($id)
     {
