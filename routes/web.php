@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
         // Resource Controllers
         Route::resource('pendaftaran', RegistrationController::class)->except(['store']);
         Route::resource('reports', ReportController::class);
+        Route::post('/reports/{id}/approve', [App\Http\Controllers\Admin\ReportController::class, 'approve'])->name('admin.reports.approve');
         Route::resource('users', UserController::class);
         Route::resource('plans', PlanController::class);
     });
@@ -52,16 +53,17 @@ Route::middleware(['auth'])->group(function () {
     // === GROUP TEKNISI ===
     Route::prefix('teknisi')->middleware(['role:teknisi'])->group(function () {
         
-        // 1. Dashboard (Statistik & Ringkasan)
+        // 1. Dashboard
         Route::get('/dashboard', [WorkerDashboardController::class, 'index'])->name('teknisi.dashboard');
         
-        // 2. Tugas Saya (Daftar Lengkap Pekerjaan)
+        // 2. Tugas
         Route::get('/tugas', [WorkerReportController::class, 'index'])->name('teknisi.assignments.index');
+        Route::patch('/pekerjaan/{id}/mulai', [WorkerDashboardController::class, 'startJob'])->name('teknisi.job.start');
         
-        // 3. Riwayat (Masih di TeknisiController)
+        // 3. Riwayat
         Route::get('/riwayat', [WorkerDashboardController::class, 'history'])->name('teknisi.history');
         
-        // 4. Profil & Ganti Password (MENGGUNAKAN WORKER PROFILE CONTROLLER)
+        // 4. Profil & Ganti Password
         Route::get('/profil', [WorkerProfileController::class, 'index'])->name('teknisi.profile');
         Route::put('/profil/info', [WorkerProfileController::class, 'updateInfo'])->name('teknisi.profile.update.info');
         Route::put('/profil/password', [WorkerProfileController::class, 'updatePassword'])->name('teknisi.profile.update.password');

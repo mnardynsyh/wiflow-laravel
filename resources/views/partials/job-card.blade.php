@@ -34,14 +34,14 @@
         {{-- Kolom 3: Aksi --}}
         <div class="flex items-center justify-end gap-2 mt-2 md:mt-0 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 w-full md:w-auto">
             
-            {{-- Tombol WA --}}
+            {{-- Tombol WA (Tetap Ada) --}}
             <a href="https://wa.me/{{ preg_replace('/^0/', '62', $job->no_hp) }}" target="_blank" 
                class="w-10 h-10 flex items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:scale-105 transition border border-emerald-100" 
                title="Chat WhatsApp">
                 <i class="fab fa-whatsapp text-xl"></i>
             </a>
 
-            {{-- Tombol Maps --}}
+            {{-- Tombol Maps (Tetap Ada) --}}
             @if($job->koordinat)
             <a href="https://www.google.com/maps/search/?api=1&query={{ $job->koordinat }}" target="_blank" 
                class="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-105 transition border border-blue-100" 
@@ -54,12 +54,31 @@
             </button>
             @endif
 
-            {{-- Tombol Lapor --}}
-            <a href="{{ route('teknisi.laporan.create', $job->id) }}" 
-               class="ml-2 flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold rounded-lg shadow-sm transition active:scale-95">
-                <i class="fas fa-camera"></i>
-                <span>Lapor</span>
-            </a>
+            {{-- LOGIKA TOMBOL DINAMIS (UPDATED) --}}
+            <div class="ml-2 flex-1 md:flex-none">
+                
+                @if($job->status == 'Scheduled')
+                    {{-- Opsi 1: Tombol MULAI KERJAKAN --}}
+                    <form action="{{ route('teknisi.job.start', $job->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" 
+                           class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold rounded-lg shadow-sm transition active:scale-95">
+                            <i class="fas fa-play text-xs"></i>
+                            <span>Mulai OTW</span>
+                        </button>
+                    </form>
+
+                @elseif($job->status == 'Progress')
+                    {{-- Opsi 2: Tombol LAPOR (Hanya muncul jika sudah Progress) --}}
+                    <a href="{{ route('teknisi.laporan.create', $job->id) }}" 
+                       class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow-sm shadow-blue-200 transition active:scale-95 animate-pulse">
+                        <i class="fas fa-camera"></i>
+                        <span>Lapor Hasil</span>
+                    </a>
+                @endif
+                
+            </div>
         </div>
 
     </div>

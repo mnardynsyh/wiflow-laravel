@@ -52,9 +52,11 @@ class ReportController extends Controller
 
         // Update status pendaftaran
         $pendaftaran = Pendaftaran::findOrFail($request->id_pendaftaran);
-        $pendaftaran->update(['status' => 'selesai']);
+        
+        // FIX BUG: Ganti 'selesai' jadi 'Completed' sesuai Enum database
+        $pendaftaran->update(['status' => 'Completed']); 
 
-        return redirect()->route('reports.index')->with('success', 'Laporan berhasil dibuat secara manual!');
+        return redirect()->route('reports.index')->with('success', 'Laporan dibuat & Status diselesaikan (Completed)!');
     }
     
     public function show(string $id)
@@ -100,5 +102,22 @@ class ReportController extends Controller
         $laporan->delete();
         
         return redirect()->route('reports.index')->with('success', 'Laporan berhasil dihapus!');
+    }
+
+    public function approve($id)
+    {
+        $laporan = LaporanInstalasi::findOrFail($id);
+        
+        // Akses data pendaftaran terkait
+        $pendaftaran = $laporan->pendaftaran;
+
+        if ($pendaftaran->status == 'Completed') {
+            return back()->with('info', 'Laporan ini sudah diverifikasi sebelumnya.');
+        }
+
+        // Update Status Jadi Completed
+        $pendaftaran->update(['status' => 'Completed']);
+
+        return back()->with('success', 'Laporan berhasil diverifikasi! Pekerjaan dinyatakan SELESAI.');
     }
 }

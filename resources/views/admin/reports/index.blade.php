@@ -12,7 +12,7 @@
             <p class="text-sm text-gray-500">Rekapitulasi hasil pekerjaan instalasi yang telah selesai dikerjakan teknisi.</p>
         </div>
         
-        {{-- Tombol Buat Laporan Manual (Ditambahkan Kembali) --}}
+        {{-- Tombol Buat Laporan Manual --}}
         <a href="{{ route('reports.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow transition-all">
             <i class="fas fa-plus"></i>
             <span>Input Laporan Manual</span>
@@ -143,10 +143,6 @@
             </table>
         </div>
         
-        {{-- Pagination (Optional) --}}
-        <div class="px-6 py-4 border-t border-slate-100 bg-slate-50">
-            {{-- $laporan->links() --}}
-        </div>
     </div>
 </div>
 @endsection

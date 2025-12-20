@@ -5,22 +5,30 @@
 @section('content')
 <div class="space-y-6">
     
-    {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Detail Laporan #{{ $laporan->id }}</h1>
-            <p class="text-sm text-gray-500">
-                <i class="far fa-clock mr-1"></i> Diselesaikan pada {{ $laporan->created_at->format('d F Y, H:i') }}
-            </p>
-        </div>
-        <div class="flex gap-2">
-            <a href="{{ route('reports.index') }}" class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-600 bg-white border border-slate-200 px-4 py-2 rounded-lg shadow-sm transition-all hover:bg-slate-50">
-                <i class="fas fa-arrow-left"></i> Kembali
-            </a>
-            <a href="{{ route('reports.edit', $laporan->id) }}" class="inline-flex items-center gap-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 px-4 py-2 rounded-lg shadow-sm transition-all">
-                <i class="fas fa-pencil-alt"></i> Edit
-            </a>
-        </div>
+    <div class="flex gap-2">
+        <a href="{{ route('reports.index') }}" class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-blue-600 bg-white border border-slate-200 px-4 py-2 rounded-lg shadow-sm transition-all hover:bg-slate-50">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
+        
+        {{-- Tombol Edit --}}
+        <a href="{{ route('reports.edit', $laporan->id) }}" class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 px-4 py-2 rounded-lg shadow-sm transition-all">
+            <i class="fas fa-pencil-alt"></i> Edit
+        </a>
+
+        {{-- Tombol Verifikasi --}}
+        @if($laporan->pendaftaran->status != 'Completed')
+            <form action="{{ route('admin.reports.approve', $laporan->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin laporan ini valid dan pekerjaan selesai?');">
+                @csrf
+                <button type="submit" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg shadow-md shadow-emerald-200 transition-all transform active:scale-95">
+                    <i class="fas fa-check-double"></i> Verifikasi Selesai
+                </button>
+            </form>
+        @else
+            {{-- Badge Jika Sudah Selesai --}}
+            <span class="inline-flex items-center gap-2 text-sm font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 px-4 py-2 rounded-lg">
+                <i class="fas fa-certificate"></i> Terverifikasi
+            </span>
+        @endif
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -140,6 +148,20 @@
                             </dd>
                         </div>
 
+                        <div class="col-span-2 md:col-span-1">
+                            <dt class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status Saat Ini</dt>
+                            <dd>
+                                @if($laporan->pendaftaran->status == 'Completed')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">
+                                        Completed (Selesai)
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800">
+                                        {{ $laporan->pendaftaran->status }}
+                                    </span>
+                                @endif
+                            </dd>
+                        </div>
                     </dl>
                 </div>
             </div>

@@ -62,4 +62,27 @@ class DashboardController extends Controller
 
         return view('worker.history', compact('riwayat'));
     }
+
+    public function startJob($id)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Cari pekerjaan yang valid milik teknisi ini
+        $job = Pendaftaran::where('id', $id)
+            ->where('id_teknisi', $user->id)
+            ->firstOrFail();
+
+        // Validasi: Hanya bisa mulai jika statusnya 'Scheduled'
+        if ($job->status !== 'Scheduled') {
+            return back()->with('error', 'Pekerjaan ini tidak dapat dimulai (Status tidak sesuai).');
+        }
+
+        // Update Status
+        $job->update([
+            'status' => 'Progress'
+        ]);
+
+        return back()->with('success', 'Status diperbarui: Sedang Dikerjakan (OTW).');
+    }
 }
