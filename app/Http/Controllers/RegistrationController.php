@@ -75,14 +75,20 @@ class RegistrationController extends Controller
     {
         $validated = $request->validate([
             'nama_pelanggan'    => 'required|string|max:255',
-            'nik_pelanggan'     => 'required|numeric',
-            'no_hp'             => 'required|string|max:20',
+            'nik_pelanggan'     => 'required|numeric|digits:16',         
+            'no_hp'             => 'required|numeric|digits_between:10,15',
             'alamat_pemasangan' => 'required|string',
             'koordinat'         => 'nullable|string', 
             'id_paket'          => 'required|exists:paket_layanan,id',
+        ], [
+            // Custom Error Message
+            'nik_pelanggan.digits' => 'NIK harus berjumlah tepat 16 digit angka.',
+            'nik_pelanggan.numeric' => 'NIK hanya boleh berisi angka.',
+
+            'no_hp.numeric'         => 'Nomor HP hanya boleh berisi angka.',
+            'no_hp.digits_between'  => 'Nomor HP tidak valid (harus 10-15 digit).',
         ]);
 
-        // Default status sesuai Enum Database
         $validated['status'] = 'Pending'; 
         $validated['id_teknisi'] = null;  
         $validated['tanggal_jadwal'] = null;
@@ -116,14 +122,20 @@ class RegistrationController extends Controller
         $validated = $request->validate([
             // Data Pelanggan
             'nama_pelanggan'    => 'nullable|string|max:255',
-            'nik_pelanggan'     => 'nullable|numeric',
-            'no_hp'             => 'nullable|string|max:20',
+            'nik_pelanggan'     => 'nullable|numeric|digits:16',
+            'no_hp'             => 'nullable|numeric|digits_between:10,15',
             'alamat_pemasangan' => 'nullable|string',
             'id_paket'          => 'nullable|exists:paket_layanan,id',
             
             // Data Penugasan
             'id_teknisi'        => 'nullable|exists:users,id',
             'tanggal_jadwal'    => 'nullable|date',
+        ], [
+            'nik_pelanggan.digits' => 'NIK harus berjumlah tepat 16 digit angka.',
+            'nik_pelanggan.numeric' => 'NIK hanya boleh berisi angka.',
+
+            'no_hp.numeric'         => 'Nomor HP hanya boleh berisi angka.',
+            'no_hp.digits_between'  => 'Nomor HP tidak valid (harus 10-15 digit).',
         ]);
 
         // 2. LOGIKA OTOMATISASI STATUS

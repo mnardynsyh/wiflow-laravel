@@ -65,19 +65,27 @@
                                        placeholder="Nama pelanggan...">
                             </div>
                         </div>
-                        
-                        {{-- Input: NIK --}}
+
+                        {{-- Input: NIK (KTP) --}}
                         <div class="space-y-1.5">
                             <label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">NIK (KTP)</label>
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition">
                                     <i class="far fa-address-card"></i>
                                 </div>
-                                <input type="number" name="nik_pelanggan" 
-                                       value="{{ old('nik_pelanggan', $pendaftaran->nik_pelanggan) }}" 
-                                       class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition placeholder-slate-300"
-                                       placeholder="16 digit NIK...">
+                                <input type="text" 
+                                    inputmode="numeric" 
+                                    name="nik_pelanggan" 
+                                    value="{{ old('nik_pelanggan', $pendaftaran->nik_pelanggan) }}" 
+                                    class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition placeholder-slate-300 font-mono"
+                                    placeholder="16 digit angka..."
+                                    minlength="16"
+                                    maxlength="16"
+                                    pattern="[0-9]*"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    
                             </div>
+                            @error('nik_pelanggan') <span class="text-xs text-red-500 ml-1 font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         {{-- Input: No HP --}}

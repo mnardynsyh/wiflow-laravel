@@ -274,47 +274,69 @@
                 <div class="md:w-3/5 p-8 md:p-12 bg-white">
                     <div class="mb-8">
                         <h3 class="text-2xl font-bold text-slate-900">Formulir Pendaftaran</h3>
-                        <p class="text-slate-500">Pastikan data yang Anda masukkan valid.</p>
+                        <p class="text-slate-500">Pastikan data yang Anda masukkan valid sesuai identitas.</p>
                     </div>
 
                     <form action="{{ route('pendaftaran.store') }}" method="POST">
                         @csrf
                         
                         <div class="space-y-6">
-                            <!-- Row 1 -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {{-- Nama Lengkap --}}
                                 <div class="space-y-1">
                                     <label class="text-sm font-semibold text-slate-700 ml-1">Nama Lengkap</label>
                                     <input type="text" name="nama_pelanggan" value="{{ old('nama_pelanggan') }}" required 
-                                        class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all py-3 px-4 font-medium text-slate-800 placeholder-slate-400" placeholder="Sesuai KTP">
+                                        class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all py-3 px-4 font-medium text-slate-800 placeholder-slate-400" 
+                                        placeholder="Sesuai KTP">
                                 </div>
+
+                                {{-- NIK (DIPERBAIKI) --}}
                                 <div class="space-y-1">
                                     <label class="text-sm font-semibold text-slate-700 ml-1">NIK (KTP)</label>
-                                    <input type="number" name="nik_pelanggan" value="{{ old('nik_pelanggan') }}" required 
-                                        class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all py-3 px-4 font-medium text-slate-800 placeholder-slate-400" placeholder="16 digit">
+                                    <input type="text" 
+                                        name="nik_pelanggan" 
+                                        value="{{ old('nik_pelanggan') }}" 
+                                        required 
+                                        inputmode="numeric" 
+                                        pattern="[0-9]*" 
+                                        minlength="16" 
+                                        maxlength="16"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                        class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all py-3 px-4 font-medium text-slate-800 placeholder-slate-400 font-mono" 
+                                        placeholder="Harus 16 digit angka">
+                                    @error('nik_pelanggan')
+                                        <p class="text-red-500 text-xs ml-1 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
-                            <!-- Row 2 -->
                             <div class="space-y-1">
                                 <label class="text-sm font-semibold text-slate-700 ml-1">Nomor WhatsApp</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <span class="text-slate-400 font-bold text-sm">+62</span>
                                     </div>
-                                    <input type="text" name="no_hp" value="{{ old('no_hp') }}" required 
-                                        class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all py-3 pl-14 pr-4 font-medium text-slate-800 placeholder-slate-400" placeholder="812...">
+                                    <input type="text" 
+                                        name="no_hp" 
+                                        value="{{ old('no_hp') }}" 
+                                        required 
+                                        inputmode="numeric"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                        class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all py-3 pl-14 pr-4 font-medium text-slate-800 placeholder-slate-400" 
+                                        placeholder="812...">
+                                        @error('no_hp')
+                                        <p class="text-red-500 text-xs ml-1 mt-1">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
-                            <!-- Row 3 -->
                             <div class="space-y-1">
                                 <label class="text-sm font-semibold text-slate-700 ml-1">Alamat Pemasangan</label>
                                 <textarea name="alamat_pemasangan" rows="3" required 
-                                    class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all py-3 px-4 font-medium text-slate-800 placeholder-slate-400 resize-none" placeholder="Jalan, No. Rumah, RT/RW, Kelurahan, Kecamatan">{{ old('alamat_pemasangan') }}</textarea>
+                                        class="w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all py-3 px-4 font-medium text-slate-800 placeholder-slate-400 resize-none" 
+                                        placeholder="Jalan, No. Rumah, RT/RW, Kelurahan, Kecamatan">{{ old('alamat_pemasangan') }}</textarea>
                             </div>
 
-                            <!-- Row 4 -->
                             <div class="space-y-1">
                                 <label class="text-sm font-semibold text-slate-700 ml-1">Koordinat Lokasi</label>
                                 <div class="flex gap-2">
@@ -323,23 +345,23 @@
                                             <i class="fas fa-map-pin text-slate-400"></i>
                                         </div>
                                         <input type="text" name="koordinat" id="koordinat" value="{{ old('koordinat') }}" readonly 
-                                            class="w-full rounded-xl border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed py-3 pl-10 pr-4 font-medium" placeholder="Otomatis terisi...">
+                                            class="w-full rounded-xl border-slate-200 bg-slate-100 text-slate-500 cursor-not-allowed py-3 pl-10 pr-4 font-medium" 
+                                            placeholder="Otomatis terisi...">
                                     </div>
                                     <button type="button" onclick="getLocation(this)" 
-                                        class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-5 rounded-xl transition-all font-semibold flex items-center gap-2 flex-shrink-0 active:scale-95">
+                                            class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-5 rounded-xl transition-all font-semibold flex items-center gap-2 flex-shrink-0 active:scale-95">
                                         <i class="fas fa-location-crosshairs"></i> 
                                         <span class="hidden sm:inline">Ambil Lokasi</span>
                                     </button>
                                 </div>
-                                <p class="text-xs text-slate-400 ml-1">*Klik tombol untuk mengambil lokasi akurat saat ini.</p>
+                                <p class="text-xs text-slate-400 ml-1">*Wajib klik tombol ambil lokasi saat berada di rumah.</p>
                             </div>
 
-                            <!-- Row 5 -->
                             <div class="space-y-1">
                                 <label class="text-sm font-semibold text-slate-700 ml-1">Paket Pilihan</label>
                                 <div class="relative">
                                     <select name="id_paket" id="id_paket" required 
-                                        class="appearance-none w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all py-3 px-4 font-medium text-slate-800 cursor-pointer">
+                                            class="appearance-none w-full rounded-xl border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all py-3 px-4 font-medium text-slate-800 cursor-pointer">
                                         <option value="" disabled selected>-- Pilih Paket Layanan --</option>
                                         @foreach($pakets as $paket)
                                             <option value="{{ $paket->id }}" {{ old('id_paket') == $paket->id ? 'selected' : '' }}>
