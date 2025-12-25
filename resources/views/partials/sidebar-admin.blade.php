@@ -124,6 +124,19 @@
                 </a>
             </li>
 
+            <li>
+                <a href="{{ route('admin.riwayat') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 
+                   {{ request()->routeIs('admin.riwayat*') 
+                       ? 'bg-blue-50 text-blue-700 font-bold shadow-sm ring-1 ring-blue-200' 
+                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                    
+                    <i class="fa-solid fa-history w-6 text-center text-[18px] transition duration-200 
+                       {{ request()->routeIs('admin.riwayat*') ? 'text-blue-600' : 'text-gray-400' }}"></i>
+                    <span class="flex-1 whitespace-nowrap">Riwayat selesai</span>
+                </a>
+            </li>
+
             <div class="px-2 mb-2 mt-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
                 Data Master
             </div>

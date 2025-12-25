@@ -45,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('pendaftaran', RegistrationController::class)->except(['store']);
         Route::resource('reports', ReportController::class);
         Route::post('/reports/{id}/approve', [App\Http\Controllers\Admin\ReportController::class, 'approve'])->name('admin.reports.approve');
+        Route::get('/riwayat-pelanggan', [RegistrationController::class, 'riwayat'])->name('admin.riwayat');
         Route::resource('users', UserController::class);
         Route::resource('plans', PlanController::class);
     });

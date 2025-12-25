@@ -10,21 +10,57 @@ use Illuminate\Support\Facades\Auth;
 
 class RegistrationController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $query = Pendaftaran::with(['paket', 'teknisi'])->latest();
 
-        if ($user->role === 'admin') {
-            $pendaftarans = Pendaftaran::with(['paket', 'teknisi'])->latest()->get();
-        } else {
-            $pendaftarans = Pendaftaran::with(['paket'])
-                ->where('id_teknisi', $user->id)
-                ->whereIn('status', ['Scheduled', 'Progress'])
-                ->latest()
-                ->get();
+        // Filter Search Global
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_pelanggan', 'like', "%{$search}%")
+                  ->orWhere('no_hp', 'like', "%{$search}%")
+                  ->orWhere('alamat_pemasangan', 'like', "%{$search}%");
+            });
         }
 
+        // FILTER STATUS
+        if ($user->role === 'admin') {
+            if ($request->filled('status') && $request->status !== 'Semua') {
+                $query->where('status', $request->status);
+            } else {
+                $query->where('status', '!=', 'Completed');
+            }
+        } else {
+            $query->where('id_teknisi', $user->id)
+                  ->whereIn('status', ['Scheduled', 'Progress']);
+        }
+
+        $pendaftarans = $query->paginate(10)->withQueryString();
+
         return view('admin.registers.index', compact('pendaftarans'));
+    }
+
+    public function riwayat(Request $request)
+    {
+        // Hanya ambil yang statusnya 'Completed'
+        $query = Pendaftaran::with(['paket', 'teknisi'])
+                    ->where('status', 'Completed')
+                    ->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_pelanggan', 'like', "%{$search}%")
+                  ->orWhere('no_hp', 'like', "%{$search}%");
+            });
+        }
+
+        $pelanggan = $query->paginate(15)->withQueryString();
+
+        return view('admin.registers.history', compact('pelanggan'));
     }
 
     public function success($id)
@@ -65,49 +101,59 @@ class RegistrationController extends Controller
     public function edit($id)
     {
         $pendaftaran = Pendaftaran::findOrFail($id);
+        
         $teknisi = User::where('role', 'teknisi')->get(); 
+        $pakets  = PaketLayanan::all(); 
 
-        return view('admin.registers.edit', compact('pendaftaran', 'teknisi'));
+        return view('admin.registers.edit', compact('pendaftaran', 'teknisi', 'pakets'));
     }
 
     public function update(Request $request, $id)
-{
-    $pendaftaran = Pendaftaran::findOrFail($id);
+    {
+        $pendaftaran = Pendaftaran::findOrFail($id);
 
-    $validated = $request->validate([
-        'id_teknisi'     => 'nullable|exists:users,id',
-        'tanggal_jadwal' => 'nullable|date',
-    ]);
+        // 1. VALIDASI MENYELURUH (Customer Data + Dispatch Data)
+        $validated = $request->validate([
+            // Data Pelanggan
+            'nama_pelanggan'    => 'nullable|string|max:255',
+            'nik_pelanggan'     => 'nullable|numeric',
+            'no_hp'             => 'nullable|string|max:20',
+            'alamat_pemasangan' => 'nullable|string',
+            'id_paket'          => 'nullable|exists:paket_layanan,id',
+            
+            // Data Penugasan
+            'id_teknisi'        => 'nullable|exists:users,id',
+            'tanggal_jadwal'    => 'nullable|date',
+        ]);
 
-    // 2. LOGIKA OTOMATISASI STATUS
-    $newStatus = $pendaftaran->status;
-
-    // Skenario A: Admin menugaskan Teknisi & Jadwal
-    if ($request->filled('id_teknisi') && $request->filled('tanggal_jadwal')) {
-        if (in_array($pendaftaran->status, ['Pending', 'Verified'])) {
-            $newStatus = 'Scheduled';
+        // 2. LOGIKA OTOMATISASI STATUS
+        $currentStatus = $pendaftaran->status;
+        
+        // Skenario A: Admin melakukan Penugasan (Dispatch)
+        // Jika Teknisi & Tanggal Diisi -> Status jadi Scheduled (Terjadwal)
+        if ($request->filled('id_teknisi') && $request->filled('tanggal_jadwal')) {
+            if (in_array($currentStatus, ['Pending', 'Verified'])) {
+                $validated['status'] = 'Scheduled';
+            }
         }
+        
+        // Skenario B: Admin Membatalkan Penugasan (Hapus Teknisi)
+        // Jika tadinya Scheduled -> Balik ke Verified
+        elseif (empty($request->id_teknisi) && $currentStatus == 'Scheduled') {
+            $validated['status'] = 'Verified';
+        }
+
+        // Skenario C: Tombol "Selesaikan" (Manual Action)
+        if ($request->action == 'complete') {
+            $validated['status'] = 'Completed';
+        }
+
+        // 3. EKSEKUSI UPDATE DATABASE
+        $pendaftaran->update($validated);
+
+        return redirect()->route('pendaftaran.index')
+            ->with('success', 'Data pendaftaran berhasil diperbarui.');
     }
-    
-    // Skenario B: Admin membatalkan tugas (kosongkan teknisi)
-    elseif (empty($request->id_teknisi) && $pendaftaran->status == 'Scheduled') {
-        $newStatus = 'Verified';
-    }
-
-    // Skenario C: Admin melakukan finalisasi (Completed)
-    if ($request->has('action') && $request->action == 'complete') {
-        $newStatus = 'Completed';
-    }
-
-    // 3. Gabungkan data
-    $validated['status'] = $newStatus;
-
-    // Update Data
-    $pendaftaran->update($validated);
-
-    return redirect()->route('pendaftaran.index')
-        ->with('success', "Data diperbarui! Status sekarang: $newStatus");
-}
 
     public function destroy($id)
     {
