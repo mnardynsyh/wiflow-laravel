@@ -90,7 +90,7 @@ class RegistrationController extends Controller
         ]);
 
         $validated['status'] = 'Pending'; 
-        $validated['id_teknisi'] = null;  
+        $validated['id_teknisi'] = null;
         $validated['tanggal_jadwal'] = null;
 
         $pendaftaran = Pendaftaran::create($validated);

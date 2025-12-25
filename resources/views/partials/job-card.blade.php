@@ -65,7 +65,7 @@
                         <button type="submit" 
                            class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold rounded-lg shadow-sm transition active:scale-95">
                             <i class="fas fa-play text-xs"></i>
-                            <span>Mulai OTW</span>
+                            <span>Kerjakan</span>
                         </button>
                     </form>
 
