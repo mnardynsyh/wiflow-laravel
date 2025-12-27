@@ -55,6 +55,6 @@ class User extends Authenticatable
     
     // Helper untuk cek role
     public function isAdmin() {
-        return $this->peran === 'admin';
+        return $this->role === 'admin';
     }
 }

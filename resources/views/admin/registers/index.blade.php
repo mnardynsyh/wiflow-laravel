@@ -11,16 +11,7 @@
             <h1 class="text-2xl font-bold text-slate-800">Data Pendaftaran Masuk</h1>
             <p class="text-sm text-slate-500">Monitoring permintaan pemasangan dan status pengerjaan.</p>
         </div>
-        
-        {{-- Statistik Sederhana (Opsional - Pemanis Dashboard) --}}
-        <div class="flex gap-2 text-sm">
-            <span class="px-3 py-1 bg-amber-50 text-amber-600 rounded-lg border border-amber-100 font-bold">
-                {{ \App\Models\Pendaftaran::where('status', 'Pending')->count() }} Pending
-            </span>
-            <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg border border-blue-100 font-bold">
-                {{ \App\Models\Pendaftaran::where('status', 'Progress')->count() }} Sedang Jalan
-            </span>
-        </div>
+    
     </div>
 
     {{-- 2. FILTER & PENCARIAN --}}
@@ -168,13 +159,17 @@
                                 @endif
 
                                 {{-- TOMBOL HAPUS (Hanya Icon agar tidak semak) --}}
-                                @if(auth()->user()->role == 'admin')
-                                <form action="{{ route('pendaftaran.destroy', $row->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini secara permanen?');">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus Data">
-                                        <i class="far fa-trash-alt"></i>
-                                    </button>
-                                </form>
+                                @if(auth()->user()->role == 'admin' && in_array($row->status, ['Pending', 'Verified']))
+                                    <form action="{{ route('pendaftaran.destroy', $row->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pendaftaran ini? Data tidak bisa dikembalikan.');">
+                                        @csrf 
+                                        @method('DELETE')
+                                        <button type="submit" class="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus Data">
+                                            <i class="far fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    {{-- Placeholder kosong agar layout rapi jika tidak ada tombol hapus --}}
+                                    <div class="w-8"></div>
                                 @endif
 
                             </div>

@@ -63,19 +63,12 @@ class RegistrationController extends Controller
         return view('admin.registers.history', compact('pelanggan'));
     }
 
-    public function success($id)
-    {
-        // Cari data berdasarkan ID
-        $pendaftaran = Pendaftaran::with('paket')->findOrFail($id);
-        
-        return view('public.success', compact('pendaftaran'));
-    }
-
+    
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nama_pelanggan'    => 'required|string|max:255',
-            'nik_pelanggan'     => 'required|numeric|digits:16',         
+            'nik_pelanggan'     => 'required|numeric|digits:16|unique:pendaftaran,nik_pelanggan',
             'no_hp'             => 'required|numeric|digits_between:10,15',
             'alamat_pemasangan' => 'required|string',
             'koordinat'         => 'nullable|string', 
@@ -83,19 +76,33 @@ class RegistrationController extends Controller
         ], [
             // Custom Error Message
             'nik_pelanggan.digits' => 'NIK harus berjumlah tepat 16 digit angka.',
+            'nik_pelanggan.unique' => 'NIK sudah terdaftar.',
             'nik_pelanggan.numeric' => 'NIK hanya boleh berisi angka.',
 
             'no_hp.numeric'         => 'Nomor HP hanya boleh berisi angka.',
             'no_hp.digits_between'  => 'Nomor HP tidak valid (harus 10-15 digit).',
         ]);
-
+        
         $validated['status'] = 'Pending'; 
         $validated['id_teknisi'] = null;
         $validated['tanggal_jadwal'] = null;
-
+        
         $pendaftaran = Pendaftaran::create($validated);
 
-        return redirect()->route('pendaftaran.sukses', $pendaftaran->id);
+        return redirect()->route('pendaftaran.sukses')
+                        ->with('registered_id', $pendaftaran->id);
+    }
+    
+    public function success($id)
+    {
+        if (!session()->has('registered_id')) {
+            return redirect('/'); // Tolak akses langsung tanpa session
+        }
+
+        $id = session('registered_id');
+        $pendaftaran = Pendaftaran::with('paket')->findOrFail($id);
+        
+        return view('public.success', compact('pendaftaran'));
     }
 
     public function show($id)
@@ -121,9 +128,9 @@ class RegistrationController extends Controller
         // 1. VALIDASI MENYELURUH (Customer Data + Dispatch Data)
         $validated = $request->validate([
             // Data Pelanggan
-            'nama_pelanggan'    => 'nullable|string|max:255',
-            'nik_pelanggan'     => 'nullable|numeric|digits:16',
-            'no_hp'             => 'nullable|numeric|digits_between:10,15',
+            'nama_pelanggan'    => 'required|string|max:255',
+            'nik_pelanggan'     => 'required|numeric|digits:16|unique:pendaftaran,nik_pelanggan',
+            'no_hp'             => 'required|numeric|digits_between:10,15',
             'alamat_pemasangan' => 'nullable|string',
             'id_paket'          => 'nullable|exists:paket_layanan,id',
             
@@ -132,6 +139,7 @@ class RegistrationController extends Controller
             'tanggal_jadwal'    => 'nullable|date',
         ], [
             'nik_pelanggan.digits' => 'NIK harus berjumlah tepat 16 digit angka.',
+            'nik_pelanggan.unique' => 'NIK sudah terdaftar.',
             'nik_pelanggan.numeric' => 'NIK hanya boleh berisi angka.',
 
             'no_hp.numeric'         => 'Nomor HP hanya boleh berisi angka.',
@@ -170,8 +178,15 @@ class RegistrationController extends Controller
     public function destroy($id)
     {
         $pendaftaran = Pendaftaran::findOrFail($id);
+
+        $allowedStatuses = ['Pending', 'Verified'];
+
+        if (!in_array($pendaftaran->status, $allowedStatuses)) {
+            return back()->with('error', 'Gagal! Data yang sedang diproses, terjadwal, atau selesai TIDAK BOLEH dihapus');
+        }
+
         $pendaftaran->delete();
 
-        return redirect()->route('pendaftaran.index')->with('success', 'Data pendaftaran dihapus.');
+        return back()->with('success', 'Data pendaftaran berhasil dihapus permanen.');
     }
 }

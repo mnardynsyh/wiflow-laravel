@@ -25,7 +25,7 @@ use App\Http\Controllers\Worker\ProfileController as WorkerProfileController;
 // --- 1. PUBLIC ROUTES ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/daftar', [RegistrationController::class, 'store'])->name('pendaftaran.store');
-Route::get('/pendaftaran-berhasil/{id}', [RegistrationController::class, 'success'])->name('pendaftaran.sukses');
+Route::get('/pendaftaran-berhasil', [RegistrationController::class, 'success'])->name('pendaftaran.sukses');
 
 // --- 2. AUTHENTICATION ROUTES ---
 Route::get('/login', [AuthController::class, 'index'])->name('login');
